@@ -1,6 +1,6 @@
 // React
 import React, { useState } from "react";
-import "./style.scss";
+import "./post.scss";
 
 // Component
 import Form from "../../form/form";
@@ -58,12 +58,7 @@ const Post = ({ post }) => {
 						</Typography>
 					</div>
 					<div className="dropdown">
-						<Button
-							id="dropdown-button"
-							aria-controls={openDropdown ? "dropdown-button" : undefined}
-							aria-haspopup="true"
-							aria-expanded={openDropdown ? "true" : undefined}
-							onClick={toggleDropdown}>
+						<Button id="dropdown-button" onClick={toggleDropdown}>
 							<MoreHorizOutlined />
 						</Button>
 					</div>
@@ -71,7 +66,6 @@ const Post = ({ post }) => {
 						<div className="dropdown-menu">
 							<Menu
 								id="dropdown-menu"
-								aria-labelledby="dropdown-button"
 								anchorEl={dropdown}
 								open={openDropdown}
 								onClose={toggleCloseDropdown}
