@@ -5,7 +5,7 @@ import { fetchData, createPost, deletePost, updatePost, likePost, disLikePost } 
 
 export const getPosts = createAsyncThunk("posts", fetchData);
 
-const thunkSlice = createSlice({
+const postsSlice = createSlice({
 	name: "posts",
 	initialState: { loading: true, data: [] },
 
@@ -69,6 +69,6 @@ const thunkSlice = createSlice({
 	},
 });
 
-export const { CREATE_POST, UPDATE_POST, DELETE_POST, LIKE_POST, DIS_LIKE_POST } = thunkSlice.actions;
+export const { CREATE_POST, UPDATE_POST, DELETE_POST, LIKE_POST, DIS_LIKE_POST } = postsSlice.actions;
 
-export default thunkSlice.reducer;
+export default postsSlice.reducer;

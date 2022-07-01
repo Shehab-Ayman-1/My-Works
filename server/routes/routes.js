@@ -2,21 +2,22 @@
 import express from "express";
 
 // Import Post Router Controllers
-import { getPosts, createPost, deletePost, updatePost, likePost, disLikePost } from "../controllers/controllers.js";
+import { getPosts, createPost, deletePost, updatePost, likePost, disLikePost } from "../controllers/posts-controller.js";
+import { signIn, signUp } from "../controllers/profile-controller.js";
+import auth_middleware from "../middleware/auth_middleware.js";
 
-// Create Post Router
-const router = express.Router();
+// Post Router
+const postsRouter = express.Router();
+postsRouter.get("/", getPosts);
+postsRouter.post("/", createPost);
+postsRouter.delete("/:id", deletePost);
+postsRouter.patch("/:id", updatePost);
+postsRouter.patch("/:id", likePost);
+postsRouter.patch("/:id/disLikePost", disLikePost);
 
-router.get("/", getPosts);
+// profile Router
+const profileRouter = express.Router();
+profileRouter.post("/signin", signIn);
+profileRouter.post("/signUp", signUp);
 
-router.post("/", createPost);
-
-router.delete("/:id", deletePost);
-
-router.patch("/:id", updatePost);
-
-router.patch("/:id", likePost);
-
-router.patch("/:id/disLikePost", disLikePost);
-
-export default router;
+export { postsRouter, profileRouter };

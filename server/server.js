@@ -6,7 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 // Import Routes
-import postsRoutes from "./routes/routes.js";
+import { postsRouter, profileRouter } from "./routes/routes.js";
 
 const app = express();
 
@@ -18,7 +18,8 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 // Create Posts Routes
-app.use("/posts", postsRoutes);
+app.use("/posts", postsRouter);
+// app.use("/profile", profileRouter);
 
 // Now, We Create A New Cluster [ DB ] On MongoDB.com And Connect To It
 const mongooseCon_URL = "mongodb+srv://MERN_PROJECT:MERN_PROJECT_123@cluster0.k0inq.mongodb.net/?retryWrites=true&w=majority";

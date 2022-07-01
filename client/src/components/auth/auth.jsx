@@ -2,29 +2,48 @@
 import React, { useState } from "react";
 import "./login.scss";
 
+// Redux
+import { useDispatch } from "react-redux";
+import { LOGIN_AUTH } from "../../redux/reducers/auth-slice";
+
+// Google Login
+import { GoogleLogin } from "react-google-login";
+import { gapi } from "gapi-script"; // It's a global variable To Make The Google Login Work
+
 // Material Ui
-import { Avatar, Container, Grid, IconButton, Paper, Typography, InputAdornment, Button } from "@mui/material";
-import { LockOutlined, Visibility, VisibilityOff } from "@mui/icons-material/";
+import { Avatar, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import { LockOutlined, Google } from "@mui/icons-material/";
+
+// Components
 import InputField from "./input-field";
 
-const Login = () => {
+const Authentication = () => {
+	const dispatch = useDispatch();
 	const [isSignUp, setIsSignUp] = useState(false);
-	const [user, setUser] = useState({ firstName: "", lastName: "", email: "", password: "" });
-	const [showPassword, setShowPassword] = useState(false);
+	const [user, setUser] = useState({ firstName: "", lastName: "", email: "", password: "", confirmedPassword: "" });
+	const [password, setPassword] = useState(true);
+
+	// Input Field Settings
+	const handleChange = (event) => setUser({ ...user, [event.target.name]: event.target.value });
+	const handleSignIn = () => setIsSignUp(!isSignUp);
+	const showPassword = () => setPassword(!password);
+
+	// JWT Google Signin
+	const handleGoogleSuccess = async (response) => {
+		const tokenObj = response?.profileObj;
+		const tokenID = response?.tokenId;
+		try {
+			dispatch(LOGIN_AUTH({ tokenID, tokenObj }));
+		} catch (error) {
+			console.warn(error);
+		}
+	};
+	const handleGoogleFailure = (err) => {
+		console.warn(err);
+		console.log("Google Login Is Failed");
+	};
 
 	const handleSubmit = () => {};
-
-	const handleSignIn = () => {
-		setIsSignUp(!isSignUp);
-	};
-
-	const handleChange = (event) => {
-		setUser({ ...user, [event.target.name]: event.target.value });
-	};
-
-	const handleShowPassword = () => {
-		setShowPassword(!showPassword);
-	};
 
 	return (
 		<Container className="auth-container" maxWidth="sm">
@@ -39,45 +58,34 @@ const Login = () => {
 
 				<form className="form-container" onSubmit={handleSubmit}>
 					<Grid container spacing={2}>
-						{isSignUp && (
-							<>
-								<InputField type="text" name="firstname" label="First Name" focus half handleChange={handleChange} />
-								<InputField type="text" name="lastname" label="Last Name" half handleChange={handleChange} />
-							</>
-						)}
+						{isSignUp && <InputField type="text" name="firstname" label="First Name" focus half change={handleChange} />}
+
+						{isSignUp && <InputField type="text" name="lastname" label="Last Name" half change={handleChange} />}
+
 						<InputField type="email" name="email" label="Your Email" handleChange={handleChange} focus />
+
 						<InputField
-							type={showPassword ? "password" : "text"}
+							type={password ? "password" : "text"}
 							name="password"
 							label="Your Password"
-							handleChange={handleChange}
-							InputProps={{
-								endAdornment: (
-									<InputAdornment position="end">
-										<IconButton onClick={handleShowPassword}>
-											{!showPassword ? <Visibility /> : <VisibilityOff />}
-										</IconButton>
-									</InputAdornment>
-								),
-							}}
+							change={handleChange}
+							showPass={showPassword}
+							password={password}
+							visPass
 						/>
+
 						{isSignUp && (
 							<InputField
-								type={showPassword ? "password" : "text"}
-								name="password"
-								label="Your Password"
-								handleChange={handleChange}
-								InputProps={{
-									endAdornment: (
-										<InputAdornment position="end">
-											<IconButton onClick={handleShowPassword}>
-												{!showPassword ? <Visibility /> : <VisibilityOff />}
-											</IconButton>
-										</InputAdornment>
-									),
-								}}
+								type={password ? "password" : "text"}
+								name="confirmedPassword"
+								label="Repeat Password"
+								change={handleChange}
+								showPass={showPassword}
+								password={password}
+								visPass
 							/>
 						)}
+
 						<Grid item xs={12}>
 							{isSignUp ? (
 								<Button type="submit" variant="contained" color="primary" fullWidth>
@@ -89,6 +97,30 @@ const Login = () => {
 								</Button>
 							)}
 						</Grid>
+
+						<Grid item xs={12}>
+							<GoogleLogin
+								// Hint: We Get The CliendId From console.cloud.google.com
+								clientId="903980825507-4jdidfuaad036vkm6h0o22bkt9qgbrlo.apps.googleusercontent.com"
+								cookiePolicy="single_host_origin"
+								// isSignedIn={true} // Auto Signin
+								onSuccess={handleGoogleSuccess}
+								onFailure={handleGoogleFailure}
+								render={(props) => (
+									<Button
+										className="google-signin"
+										color="primary"
+										variant="contained"
+										onClick={props.onClick}
+										disabled={props.disabled}
+										startIcon={<Google />}
+										fullWidth>
+										Google Sign In
+									</Button>
+								)}
+							/>
+						</Grid>
+
 						<Grid item xs={12}>
 							<Typography className="is-sign-up" variant="body2" onClick={handleSignIn}>
 								{isSignUp ? "I Already Have An Account" : "Don't Have An Account"}
@@ -101,4 +133,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default Authentication;

@@ -1,0 +1,11 @@
+import mongoose from "mongoose";
+
+const profileSchema = mongoose.Schema({
+	id: { type: String },
+	username: { type: String, required: true },
+	email: { type: String, required: true },
+	password: { type: String, required: true },
+});
+
+const profileInfo = mongoose.model("profile", profileSchema);
+export default profileInfo;
