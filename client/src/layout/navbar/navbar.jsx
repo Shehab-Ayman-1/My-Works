@@ -18,16 +18,8 @@ const Navbar = () => {
 		JSON.parse(window.localStorage.getItem("profile")) ? JSON.parse(window.localStorage.getItem("profile")) : []
 	);
 
-	// dropdown
-	const [dropdown, setDropdown] = useState(null);
-	const open = Boolean(dropdown);
-	const openDropdown = (event) => setDropdown(event.currentTarget);
-	const closeDropdown = () => setDropdown(null);
-
 	// logout
-	const handleLogout = () => {
-		dispatch(LOGOUT_AUTH());
-	};
+	const handleLogout = () => dispatch(LOGOUT_AUTH());
 
 	return (
 		// Header Tag
@@ -40,26 +32,26 @@ const Navbar = () => {
 			<Toolbar className="right-section">
 				{profile.tokenObj ? (
 					<>
-						<div className="user-profile" onClick={openDropdown}>
-							<Avatar className="user-img" alt="img" sx={{ bgcolor: deepOrange[500] }}>
+						<div className="user-profile">
+							<Typography className="user-info" variant="h3">
+								<span className="info-username" align="right">
+									{profile.tokenObj.name}
+								</span>
+								<span className="info-email" align="right">
+									{profile.tokenObj.email}
+								</span>
+							</Typography>
+
+							<Avatar className="user-img" alt="img" sx={{ bgcolor: deepOrange[500], mr: 3 }}>
 								{profile.tokenObj.name.charAt(0)}
 							</Avatar>
-
-							<Typography className="user-info" variant="h3">
-								<span className="info-username">{profile.tokenObj.name}</span>
-								<span className="info-email">{profile.tokenObj.email}</span>
-							</Typography>
 						</div>
-						<Menu anchorEl={dropdown} open={open}>
-							<MenuItem onClick={closeDropdown}>
-								<Button variant="contained" color="secondary" onClose={closeDropdown} onClick={handleLogout}>
-									Logout
-								</Button>
-							</MenuItem>
-						</Menu>
+						<Button variant="contained" color="secondary" onClick={handleLogout}>
+							Logout
+						</Button>
 					</>
 				) : (
-					<Button component={Link} to="/auth" variant="contained" color="primary">
+					<Button variant="contained" color="primary" component={Link} to="/auth">
 						Sign In
 					</Button>
 				)}

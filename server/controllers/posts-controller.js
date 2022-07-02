@@ -47,7 +47,7 @@ export const updatePost = async (req, res) => {
 };
 
 export const likePost = async (req, res) => {
-	// We Have 2 Ways To Change Just One Key From The Object
+	// We Have 2 Ways To Change One Key In The Post Object
 	// [1] The First Key
 	const { id: _id } = req.params;
 	const post = req.body;
