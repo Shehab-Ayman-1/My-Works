@@ -9,7 +9,8 @@ import { useDispatch } from "react-redux";
 import { LOGOUT_AUTH } from "../../redux/reducers/auth-slice";
 
 // Material Ui
-import { AppBar, Avatar, Button, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, Button, Divider, ListItemIcon, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { PersonAdd, Settings, Logout } from "@mui/icons-material";
 import { deepOrange } from "@mui/material/colors";
 
 const Navbar = () => {
@@ -17,6 +18,12 @@ const Navbar = () => {
 	const [profile, setProfile] = useState(
 		JSON.parse(window.localStorage.getItem("profile")) ? JSON.parse(window.localStorage.getItem("profile")) : []
 	);
+
+	// Menu Settings
+	const [anchorEl, setAnchorEl] = useState(null);
+	const open = Boolean(anchorEl);
+	const handleOpen = (event) => setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
 
 	// logout
 	const handleLogout = () => dispatch(LOGOUT_AUTH());
@@ -32,26 +39,41 @@ const Navbar = () => {
 			<Toolbar className="right-section">
 				{profile.tokenObj ? (
 					<>
-						<div className="user-profile">
-							<Typography className="user-info" variant="h3">
-								<span className="info-username" align="right">
-									{profile.tokenObj.name}
-								</span>
-								<span className="info-email" align="right">
-									{profile.tokenObj.email}
-								</span>
-							</Typography>
-
-							<Avatar className="user-img" alt="img" sx={{ bgcolor: deepOrange[500], mr: 3 }}>
-								{profile.tokenObj.name.charAt(0)}
-							</Avatar>
-						</div>
-						<Button variant="contained" color="secondary" onClick={handleLogout}>
-							Logout
-						</Button>
+						<Avatar sx={{ bgcolor: deepOrange[500], cursor: "pointer" }} onClick={handleOpen}>
+							{profile.tokenObj.name.charAt(0)}
+						</Avatar>
+						<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+							<MenuItem>
+								<Avatar src={profile.tokenObj.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
+								{profile.tokenObj.name}
+							</MenuItem>
+							<MenuItem>
+								<Avatar src={profile.tokenObj.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
+								{profile.tokenObj.email}
+							</MenuItem>
+							<Divider />
+							<MenuItem component={Link} to="/auth">
+								<ListItemIcon>
+									<PersonAdd />
+								</ListItemIcon>
+								Add another account
+							</MenuItem>
+							<MenuItem>
+								<ListItemIcon>
+									<Settings />
+								</ListItemIcon>
+								Settings
+							</MenuItem>
+							<MenuItem onClick={handleLogout}>
+								<ListItemIcon>
+									<Logout />
+								</ListItemIcon>
+								Logout
+							</MenuItem>
+						</Menu>
 					</>
 				) : (
-					<Button variant="contained" color="primary" component={Link} to="/auth">
+					<Button variant="outlined" color="primary" component={Link} to="/auth">
 						Sign In
 					</Button>
 				)}

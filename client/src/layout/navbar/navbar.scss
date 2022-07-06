@@ -29,26 +29,23 @@ header.header {
 			}
 		}
 	}
-	.right-section {
-		.user-profile {
-			@include flex(space-between, center);
-			gap: 1rem;
-			cursor: pointer;
-			.user-img {
-				width: 35px;
-				height: 35px;
+}
+.MuiModal-root {
+	.user-profile {
+		@include flex(space-between, center);
+		gap: 1rem;
+		cursor: pointer;
+		.user-info {
+			text-align: center;
+			.info-username {
+				color: orangered;
+				font-size: 22px;
+				display: block;
 			}
-			.user-info {
-				.info-username {
-					color: orangered;
-					font-size: 22px;
-					display: block;
-				}
-				.info-email {
-					color: #777;
-					font-size: 14px;
-					display: block;
-				}
+			.info-email {
+				color: #777;
+				font-size: 14px;
+				display: block;
 			}
 		}
 	}
