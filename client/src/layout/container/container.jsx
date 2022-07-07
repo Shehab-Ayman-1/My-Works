@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 
 const HomeContainer = () => {
 	const state = useSelector((state) => state.posts);
+
 	return (
 		<Container className="app-container" maxWidth="xl">
 			<Navbar />

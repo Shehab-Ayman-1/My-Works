@@ -6,7 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 // Import Routes
-import postsRouter from "./routes/routes.js";
+import { postsRouter, authRouter } from "./routes/routes.js";
 
 const app = express();
 
@@ -19,6 +19,7 @@ app.use(cors());
 
 // Create Posts Routes
 app.use("/posts", postsRouter);
+app.use("/auth", authRouter);
 
 // Now, We Create A New Cluster [ DB ] On MongoDB.com And Connect To It
 const mongooseCon_URL = process.env.mongooseCon_URL;

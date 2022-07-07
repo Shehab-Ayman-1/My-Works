@@ -1,30 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { signInUser, RegisterUser } from "../../util/server";
+
+const storage = JSON.parse(localStorage.getItem("profile"));
 
 const authSlice = createSlice({
 	name: "auth",
-	initialState: { data: [] },
+	initialState: { data: storage ? storage : [] },
 	reducers: {
 		LOGIN_AUTH: (state, action) => {
-			window.localStorage.setItem("profile", JSON.stringify(action?.payload));
+			window.localStorage.setItem("profile", JSON.stringify(action.payload));
 			state.data = action.payload;
+			RegisterUser(action.payload);
 			window.location.href = "/";
 		},
 
 		LOGOUT_AUTH: (state, action) => {
 			window.localStorage.removeItem("profile");
 			window.location.href = "/auth";
-			window.location.reload();
 		},
 
 		SIGNIN_AUTH: (state, action) => {
-			window.location.href = "/";
+			window.localStorage.setItem("profile", JSON.stringify(action.payload));
+			state.data = action.payload;
+			signInUser(action.payload);
+			// window.location.href = "/";
 		},
 
-		SIGNUP_AUTH: (state, action) => {
+		REGISTER_AUTH: (state, action) => {
+			window.localStorage.setItem("profile", JSON.stringify(action.payload));
+			state.data = action.payload;
+			RegisterUser(action.payload);
 			window.location.href = "/";
 		},
 	},
 });
 
-export const { LOGIN_AUTH, LOGOUT_AUTH, SIGNIN_AUTH, SIGNOUT_AUTH } = authSlice.actions;
+export const { LOGIN_AUTH, LOGOUT_AUTH, SIGNIN_AUTH, REGISTER_AUTH } = authSlice.actions;
 export default authSlice.reducer;

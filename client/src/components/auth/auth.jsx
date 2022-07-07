@@ -4,7 +4,7 @@ import "./login.scss";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { LOGIN_AUTH } from "../../redux/reducers/auth-slice";
+import { LOGIN_AUTH, SIGNIN_AUTH, REGISTER_AUTH } from "../../redux/reducers/auth-slice";
 
 // Google Login
 import { GoogleLogin } from "react-google-login";
@@ -20,7 +20,7 @@ import InputField from "./input-field";
 const Authentication = () => {
 	const dispatch = useDispatch();
 	const [isSignUp, setIsSignUp] = useState(false);
-	const [user, setUser] = useState({ firstName: "", lastName: "", email: "", password: "", confirmedPassword: "" });
+	const [user, setUser] = useState({ firstName: "", lastName: "", email: "", imageUrl: "", password: "", confirmedPassword: "" });
 	const [password, setPassword] = useState(true);
 
 	// Input Field Settings
@@ -30,10 +30,10 @@ const Authentication = () => {
 
 	// JWT Google Signin
 	const handleGoogleSuccess = async (response) => {
-		const tokenObj = response?.profileObj;
-		const tokenID = response?.tokenId;
+		const user = response?.profileObj;
+		console.log(user);
 		try {
-			dispatch(LOGIN_AUTH({ tokenID, tokenObj }));
+			dispatch(LOGIN_AUTH({ firstName: user.givenName, lastName: user.familyName, email: user.email, imageUrl: user.imageUrl }));
 		} catch (error) {
 			console.warn(error);
 		}
@@ -43,7 +43,30 @@ const Authentication = () => {
 		console.log("Google Login Is Failed");
 	};
 
-	const handleSubmit = () => {};
+	// Submit
+	const handleSubmit = (event) => {
+		event.preventDefault();
+	};
+
+	// SIGNIN USER
+	const handleSignInUser = () => {
+		if (user.email && user.password) {
+			dispatch(SIGNIN_AUTH({ email: user.email, password: user.password }));
+		} else {
+			alert("Please Fill All Fields");
+		}
+	};
+
+	// RESISTER USER
+	const handleRegisterUser = () => {
+		if (user.firstName && user.lastName && user.email && user.password && user.confirmedPassword) {
+			if (user.password === user.confirmedPassword) {
+				dispatch(REGISTER_AUTH(user));
+			} else {
+				alert("Password Doesn't Match");
+			}
+		}
+	};
 
 	return (
 		<Container className="auth-container" maxWidth="sm">
@@ -58,11 +81,11 @@ const Authentication = () => {
 
 				<form className="form-container" onSubmit={handleSubmit}>
 					<Grid container spacing={2}>
-						{isSignUp && <InputField type="text" name="firstname" label="First Name" focus half change={handleChange} />}
+						{isSignUp && <InputField type="text" name="firstName" label="First Name" focus half change={handleChange} />}
 
-						{isSignUp && <InputField type="text" name="lastname" label="Last Name" half change={handleChange} />}
+						{isSignUp && <InputField type="text" name="lastName" label="Last Name" half change={handleChange} />}
 
-						<InputField type="email" name="email" label="Your Email" handleChange={handleChange} focus />
+						<InputField type="email" name="email" label="Your Email" change={handleChange} focus />
 
 						<InputField
 							type={password ? "password" : "text"}
@@ -88,11 +111,11 @@ const Authentication = () => {
 
 						<Grid item xs={12}>
 							{isSignUp ? (
-								<Button type="submit" variant="contained" color="primary" fullWidth>
+								<Button type="submit" variant="contained" color="primary" fullWidth onClick={handleRegisterUser}>
 									Sign Up
 								</Button>
 							) : (
-								<Button type="submit" variant="contained" color="primary" fullWidth>
+								<Button type="submit" variant="contained" color="primary" fullWidth onClick={handleSignInUser}>
 									Sign In
 								</Button>
 							)}

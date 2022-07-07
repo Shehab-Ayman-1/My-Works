@@ -1,11 +1,11 @@
 // React
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./navbar.scss";
 import logo from "../../images/logo.png";
 
 // Redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LOGOUT_AUTH } from "../../redux/reducers/auth-slice";
 
 // Material Ui
@@ -15,9 +15,7 @@ import { deepOrange } from "@mui/material/colors";
 
 const Navbar = () => {
 	const dispatch = useDispatch();
-	const [profile, setProfile] = useState(
-		JSON.parse(window.localStorage.getItem("profile")) ? JSON.parse(window.localStorage.getItem("profile")) : []
-	);
+	const profile = useSelector((state) => state.auth.data);
 
 	// Menu Settings
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -37,19 +35,22 @@ const Navbar = () => {
 			</Typography>
 
 			<Toolbar className="right-section">
-				{profile.tokenObj ? (
+				{profile.firstName ? (
 					<>
-						<Avatar sx={{ bgcolor: deepOrange[500], cursor: "pointer" }} onClick={handleOpen}>
-							{profile.tokenObj.name.charAt(0)}
-						</Avatar>
+						<Avatar
+							src={profile?.imageUrl}
+							alt="img"
+							sx={{ width: 32, height: 32, mr: 1, cursor: "pointer" }}
+							onClick={handleOpen}
+						/>
 						<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 							<MenuItem>
-								<Avatar src={profile.tokenObj.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
-								{profile.tokenObj.name}
+								<Avatar sx={{ bgcolor: "orangered", width: 32, height: 32, mr: 1 }}>{profile?.firstName.charAt(0)}</Avatar>
+								{`${profile?.firstName} ${profile?.lastName}`}
 							</MenuItem>
 							<MenuItem>
-								<Avatar src={profile.tokenObj.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
-								{profile.tokenObj.email}
+								<Avatar src={profile?.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
+								{profile?.email}
 							</MenuItem>
 							<Divider />
 							<MenuItem component={Link} to="/auth">
