@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 // Import Routes
 import { postsRouter, authRouter } from "./routes/routes.js";
@@ -11,6 +12,9 @@ import { postsRouter, authRouter } from "./routes/routes.js";
 const app = express();
 
 dotenv.config();
+
+// Cookies
+app.use(cookieParser());
 
 // Limit the size of the request body To Max 30 Megabytes
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
