@@ -1,7 +1,7 @@
 import logo from "../../images/logo.png";
 
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchData, createPost, deletePost, updatePost, likePost, disLikePost } from "../../util/server.js";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchData, createPost, deletePost, updatePost, likePost, disLikePost } from "../../util/posts";
 
 export const getPosts = createAsyncThunk("posts", fetchData);
 

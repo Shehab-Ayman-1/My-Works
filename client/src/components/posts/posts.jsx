@@ -30,7 +30,7 @@ const Posts = () => {
 							onClose={handleClose}
 							severity="success"
 							sx={{ bgcolor: "#388e3c", color: "white", ".MuiSvgIcon-root": { color: "white" } }}>
-							Success Connect, The Data Is Defined In MongoDB Server !
+							Success Connect, The Data Is Defined In MongoDB !
 						</Alert>
 					</Snackbar>
 				</>

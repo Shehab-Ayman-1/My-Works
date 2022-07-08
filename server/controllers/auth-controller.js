@@ -11,8 +11,6 @@ export const loginAuth = async (req, res) => {
 
 		// If The User Is Existing In The Database
 		if (user) {
-			if (!body.password) return res.status(200).send(user);
-
 			// Compare If The Signin Password Is Match With The Database Password
 			const isPasswordCurrect = await bcrypt.compare(body.password, user.password);
 
@@ -24,7 +22,6 @@ export const loginAuth = async (req, res) => {
 				res.cookie("access_token", token, { httpOnly: true })
 					.status(200)
 					.send({ ...otherDetails });
-				console.log(req.cookie);
 			} else {
 				res.status(401).json({ message: "Invalid Password" });
 			}
