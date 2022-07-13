@@ -1,5 +1,6 @@
 // React
 import React, { useState, useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./navbar.scss";
 
 // Material Icons
@@ -13,7 +14,6 @@ import { Menu, MenuItem, Divider, IconButton, styled } from "@mui/material";
 // Context
 import { Context } from "../../context/createContext";
 import { TOGGLE_MODE } from "../../context/actions";
-import { Link } from "react-router-dom";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 	width: 62,
@@ -531,7 +531,7 @@ const Navbar = () => {
 
 						<Divider variant="middle" component="hr" sx={{ m: "0 !important" }} />
 
-						<Link to="/login">
+						<Link to="/">
 							<MenuItem
 								sx={{
 									bgcolor: "var(--mode-bg)",

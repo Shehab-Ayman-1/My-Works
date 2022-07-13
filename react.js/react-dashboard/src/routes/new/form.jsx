@@ -31,7 +31,7 @@ const FormValidation = (props) => {
 									<input id={input.id} type={input.type} placeholder={input.placeholder} required />
 								</div>
 							))}
-							<Button type="submit" className="submit-btn" variant="contained" color="secondary">
+							<Button className="submit-btn" variant="contained" color="secondary">
 								Submit
 							</Button>
 						</div>

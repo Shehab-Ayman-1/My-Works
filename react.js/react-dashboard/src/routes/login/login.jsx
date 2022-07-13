@@ -1,6 +1,6 @@
 // React
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./login.scss";
 
 // Logo
@@ -29,7 +29,7 @@ const Login = () => {
 			passwordValid.classList.remove("active");
 			email = "";
 			password = "";
-			navigate("/");
+			navigate("/home-page");
 		}
 	};
 	return (

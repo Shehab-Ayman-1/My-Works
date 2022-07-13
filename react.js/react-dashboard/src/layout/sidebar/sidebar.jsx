@@ -63,7 +63,7 @@ const Sidebar = () => {
 		<section className="sidebar">
 			<div className="header-sidebar">
 				<Close className="icon cross" onClick={handleSidebar} />
-				<Link to="/" className="title">
+				<Link to="/home-page" className="title">
 					<img src={logo} alt="logo" />
 					<span>Dashboard</span>
 				</Link>
@@ -73,7 +73,7 @@ const Sidebar = () => {
 				<ul className="main-list">
 					<h4 className="link-title">Main</h4>
 					<li>
-						<Link to="/" className="link-content">
+						<Link to="/home-page" className="link-content">
 							<Dashboard className="icon" />
 							<span>Dashboard</span>
 						</Link>
@@ -135,7 +135,7 @@ const Sidebar = () => {
 						</div>
 					</li>
 					<li>
-						<Link to="/login" className="link-content">
+						<Link to="/" className="link-content">
 							<LoginOutlined className="icon" />
 							<span>Logout</span>
 						</Link>
