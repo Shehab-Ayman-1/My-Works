@@ -3,7 +3,7 @@ import logo from "../../images/logo.png";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchData, createPost, deletePost, updatePost, likePost, disLikePost } from "../../util/posts";
 
-export const getPosts = createAsyncThunk("posts", fetchData);
+export const GET_POSTS = createAsyncThunk("posts", fetchData);
 
 const postsSlice = createSlice({
 	name: "posts",
@@ -37,38 +37,40 @@ const postsSlice = createSlice({
 		},
 
 		LIKE_POST: (state, action) => {
-			const post = state.data.find((post) => post._id == action.payload._id);
-			const index = state.data.indexOf(post);
-			post.likes++;
-			state.data[index] = post;
-			likePost(action.payload._id, post);
-		},
+			const { id, storage } = action.payload;
+			const post = state.data.find((post) => post._id == id);
+			const postIndex = state.data.indexOf(post);
 
-		DIS_LIKE_POST: (state, action) => {
-			const post = state.data.find((post) => post._id == action.payload._id);
-			const index = state.data.indexOf(post);
-			post.disLikes++;
-			state.data[index] = post;
-			disLikePost(action.payload._id);
+			if (storage) {
+				const isExist = state.data[postIndex].likes.findIndex((userID) => userID === storage.token);
+				if (isExist === -1) {
+					state.data[postIndex].likes.push(storage.token);
+					likePost(id, storage.token);
+				} else {
+					const postLike = post.likes.findIndex((id) => id === storage.token);
+					state.data[postIndex].likes.splice(postLike, 1);
+					disLikePost(id, storage.token);
+				}
+			}
 		},
 	},
 
 	extraReducers: {
-		[getPosts.pending]: (state, action) => {
+		[GET_POSTS.pending]: (state, action) => {
 			state.loading = true;
 		},
 
-		[getPosts.fulfilled]: (state, action) => {
+		[GET_POSTS.fulfilled]: (state, action) => {
 			state.loading = false;
 			state.data = action.payload;
 		},
 
-		[getPosts.rejected]: (state, action) => {
+		[GET_POSTS.rejected]: (state, action) => {
 			state.loading = true;
 		},
 	},
 });
 
-export const { CREATE_POST, UPDATE_POST, DELETE_POST, LIKE_POST, DIS_LIKE_POST } = postsSlice.actions;
+export const { CREATE_POST, UPDATE_POST, DELETE_POST, LIKE_POST } = postsSlice.actions;
 
 export default postsSlice.reducer;

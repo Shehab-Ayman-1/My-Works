@@ -1,11 +1,11 @@
 // React
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./scss/style.scss";
+import "./scss/_index.scss";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { getPosts } from "./redux/reducers/posts-slice";
+import { GET_POSTS } from "./redux/reducers/posts-slice";
 
 // Components
 import Container from "./layout/container/container";
@@ -15,16 +15,15 @@ function App() {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(getPosts());
+		dispatch(GET_POSTS());
 	}, []);
 
 	return (
 		<BrowserRouter>
 			<Routes>
+				<Route path="/" element={<Container />} />
+
 				<Route path="/auth" element={<Login />} />
-				<Route path="/">
-					<Route index element={<Container />} />
-				</Route>
 			</Routes>
 		</BrowserRouter>
 	);

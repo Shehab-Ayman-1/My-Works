@@ -7,7 +7,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 // Import Routes
-import { postsRouter, authRouter } from "./routes/routes.js";
+import postsRouters from "./routes/posts.routes.js";
+import authRouters from "./routes/auth.routes.js";
 
 const app = express();
 
@@ -22,8 +23,8 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 // Create Posts Routes
-app.use("/posts", postsRouter);
-app.use("/auth", authRouter);
+app.use("/posts", postsRouters);
+app.use("/auth", authRouters);
 
 // Now, We Create A New Cluster [ DB ] On MongoDB.com And Connect To It
 const mongooseCon_URL = process.env.mongooseCon_URL;

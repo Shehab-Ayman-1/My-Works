@@ -9,9 +9,9 @@ import { Button, Paper, TextField, Typography } from "@mui/material";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { CREATE_POST, UPDATE_POST, getPosts } from "../../redux/reducers/posts-slice";
+import { CREATE_POST, UPDATE_POST, GET_POSTS } from "../../redux/reducers/posts-slice";
 
-const Form = ({ title, setOpenModel, updatePost, updateState, setUpdateState }) => {
+const Form = ({ title, setOpenModel, updatePost, updateState }) => {
 	const dispatch = useDispatch();
 	const [postsData, setPostsData] = useState({ title: "", creator: "", tags: "", message: "", selectedFile: logo });
 
@@ -31,7 +31,7 @@ const Form = ({ title, setOpenModel, updatePost, updateState, setUpdateState }) 
 		} else {
 			dispatch(CREATE_POST(postsData));
 			const interval = setInterval(() => {
-				dispatch(getPosts());
+				dispatch(GET_POSTS());
 				clearInterval(interval);
 			}, 700);
 		}
@@ -54,53 +54,17 @@ const Form = ({ title, setOpenModel, updatePost, updateState, setUpdateState }) 
 				</Typography>
 
 				<div className="form-body">
-					<TextField
-						name="creator"
-						variant="outlined"
-						label="Creator"
-						fullWidth
-						value={postsData.creator}
-						onChange={handleField}
-						required
-					/>
+					<TextField name="creator" label="Creator" fullWidth value={postsData.creator} onChange={handleField} />
 
-					<TextField
-						name="title"
-						variant="outlined"
-						label="title"
-						fullWidth
-						value={postsData.title}
-						onChange={handleField}
-						required
-					/>
+					<TextField name="title" label="title" fullWidth value={postsData.title} onChange={handleField} />
 
-					<TextField
-						name="tags"
-						variant="outlined"
-						label="tags"
-						fullWidth
-						value={postsData.tags}
-						onChange={handleField}
-						required
-					/>
+					<TextField name="tags" label="tags" fullWidth value={postsData.tags} onChange={handleField} />
 
-					<TextField
-						name="message"
-						variant="outlined"
-						label="message"
-						fullWidth
-						value={postsData.message}
-						onChange={handleField}
-						required
-					/>
+					<TextField name="message" label="message" fullWidth value={postsData.message} onChange={handleField} />
 
 					<div className="file-input">
 						<img className="file-input-img" src={postsData.selectedFile} alt="file-input" />
-						<FileBase
-							type="file"
-							multiple={false}
-							onDone={({ base64 }) => setPostsData({ ...postsData, selectedFile: base64 })}
-						/>
+						<FileBase type="file" onDone={({ base64 }) => setPostsData({ ...postsData, selectedFile: base64 })} />
 					</div>
 				</div>
 

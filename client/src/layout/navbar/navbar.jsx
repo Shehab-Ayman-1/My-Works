@@ -14,7 +14,7 @@ import { PersonAdd, Settings, Logout } from "@mui/icons-material";
 
 const Navbar = () => {
 	const dispatch = useDispatch();
-	const profile = JSON.parse(localStorage.getItem("profile")) || {};
+	const storage = JSON.parse(localStorage.getItem("profile")) || {};
 
 	// Menu Settings
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -34,22 +34,24 @@ const Navbar = () => {
 			</Typography>
 
 			<Toolbar className="right-section">
-				{profile.email ? (
+				{storage.profile ? (
 					<>
 						<Avatar
-							src={profile.imageUrl}
+							src={storage.profile.imageUrl}
 							alt="img"
-							sx={{ width: 70, height: 70, mr: 1, cursor: "pointer" }}
+							sx={{ width: 50, height: 50, mr: 1, cursor: "pointer", borderRadius: 0 }}
 							onClick={handleOpen}
 						/>
 						<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
 							<MenuItem>
-								<Avatar sx={{ bgcolor: "orangered", width: 32, height: 32, mr: 1 }}>{profile.name.charAt(0)}</Avatar>
-								{profile.name}
+								<Avatar sx={{ bgcolor: "orangered", width: 32, height: 32, mr: 1 }}>
+									{storage.profile.name.charAt(0)}
+								</Avatar>
+								{storage.profile.name}
 							</MenuItem>
 							<MenuItem>
-								<Avatar src={profile.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
-								{profile.email}
+								<Avatar src={storage.profile.imageUrl} alt="img" sx={{ width: 32, height: 32, mr: 1 }} />
+								{storage.profile.email}
 							</MenuItem>
 							<Divider />
 							<MenuItem component={Link} to="/auth">

@@ -15,14 +15,14 @@ import { useNavigate } from "react-router-dom";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { NOT_EXIST, REGISTER_AUTH, Login, Register } from "../../redux/reducers/auth-slice";
+import { EXIST, LOGIN_AUTH, REGISTER_AUTH } from "../../redux/reducers/auth-slice";
 
 // Google Login
 import { GoogleLogin } from "react-google-login";
 import { gapi } from "gapi-script"; // It's a global variable To Make The Google Login Work
 
 // Material Ui
-import { Alert, Avatar, Button, Container, Grid, Input, Paper, Snackbar, Stack, Typography } from "@mui/material";
+import { Alert, Avatar, Button, Container, Grid, Paper, Snackbar, Stack, Typography } from "@mui/material";
 import { LockOutlined, Google, ArrowBack } from "@mui/icons-material/";
 
 // Components
@@ -30,27 +30,21 @@ import InputField from "./input-field";
 
 const GOOGLE_CLIENT_ID = "903980825507-4jdidfuaad036vkm6h0o22bkt9qgbrlo.apps.googleusercontent.com";
 
-const formInitialState = {
-	firstName: "",
-	lastName: "",
-	email: "",
-	imageUrl: logo,
-	password: "",
-	confirmedPassword: "",
-};
+const formInitialState = { firstName: "", lastName: "", email: "", imageUrl: logo, password: "", confirmedPassword: "" };
 
 const Authentication = () => {
 	const navigate = useNavigate();
+
 	// Redux
 	const dispatch = useDispatch();
-	const { snackbar } = useSelector((state) => state.auth);
+	const { signinExist, signupExist } = useSelector((state) => state.auth);
 
 	// Fields State
 	const [userForm, setUserForm] = useState(formInitialState);
 
 	// SnackBar
-	const [wrongmsg, setWrongmsg] = useState("Invalid Email Or Password !!");
-	const [openSnackbar, setOpenSnackbar] = useState(snackbar ? true : false);
+	const [wrongmsg, setWrongmsg] = useState("Invalid Email OR Password !!");
+	const [openSnackbar, setOpenSnackbar] = useState(false);
 	const closeSnackbar = () => setOpenSnackbar(false);
 	const handleOpenSnackbar = (msg) => {
 		setWrongmsg(msg);
@@ -59,8 +53,11 @@ const Authentication = () => {
 
 	// Input Field Settings
 	const [showPassword, setShowPassword] = useState(true);
-	const handleChange = (event) => setUserForm({ ...userForm, [event.target.name]: event.target.value });
 	const handleShowPassword = () => setShowPassword(!showPassword);
+	const handleChange = (event) => {
+		setUserForm({ ...userForm, [event.target.name]: event.target.value });
+		dispatch(EXIST(true));
+	};
 
 	// Wedgets States
 	const handleSign = (method) => {
@@ -99,12 +96,19 @@ const Authentication = () => {
 	const [isSignin, setIsSignin] = useState(true);
 	const handle_signin = (event) => {
 		event.preventDefault();
-		handleOpenSnackbar("Wrong Password, Or This Account Doesn't Register !!");
 
-		// [1] Chack If The Fields Are Valid
-		if (isSignin || isGoogleSignin) {
-			if ((userForm.email && userForm.password) || userForm.password === userForm.confirmedPassword) {
-				dispatch(Login(userForm));
+		if (isSignin) {
+			if (signinExist && userForm.email && userForm.password) {
+				dispatch(LOGIN_AUTH(userForm));
+			} else {
+				handleOpenSnackbar("Wrong Password, Or This Account Doesn't Register !!");
+			}
+		}
+		if (isGoogleSignin) {
+			if (signinExist && userForm.password === userForm.confirmedPassword) {
+				dispatch(LOGIN_AUTH(userForm));
+			} else {
+				handleOpenSnackbar("Wrong Password, Or This Account Doesn't Register !!");
 			}
 		}
 	};
@@ -113,13 +117,23 @@ const Authentication = () => {
 	const [isSignup, setIsSignup] = useState(false);
 	const handle_signup = (event) => {
 		event.preventDefault();
-		handleOpenSnackbar("Invalid Fields !!");
 
-		if (isSignup || isGoogleSignup) {
+		if (isSignup) {
 			if (userForm.firstName && userForm.lastName && userForm.email && userForm.password && userForm.confirmedPassword) {
-				if (!snackbar && userForm.password === userForm.confirmedPassword) {
-					dispatch(Register(userForm));
+				if (signupExist && userForm.password === userForm.confirmedPassword) {
+					dispatch(REGISTER_AUTH(userForm));
+				} else {
+					handleOpenSnackbar("Invalid Fields ! !");
 				}
+			} else {
+				handleOpenSnackbar("All Fields Have To Be Filled ! !");
+			}
+		}
+		if (isGoogleSignup) {
+			if (signupExist && userForm.password) {
+				dispatch(REGISTER_AUTH(userForm));
+			} else {
+				handleOpenSnackbar("All Fields Have To Be Filled! !");
 			}
 		}
 	};
@@ -302,16 +316,14 @@ const Authentication = () => {
 						</Grid>
 
 						<Grid item xs={12} className="is-signin-field">
-							{snackbar && (
-								<Snackbar open={openSnackbar} autoHideDuration={1500} onClose={closeSnackbar}>
-									<Alert
-										severity="error"
-										onClose={closeSnackbar}
-										sx={{ bgcolor: "#d32f2f", color: "white", ".MuiSvgIcon-root": { color: "white" } }}>
-										{wrongmsg}
-									</Alert>
-								</Snackbar>
-							)}
+							<Snackbar open={openSnackbar} autoHideDuration={1500} onClose={closeSnackbar}>
+								<Alert
+									severity="error"
+									onClose={closeSnackbar}
+									sx={{ bgcolor: "#d32f2f", color: "white", ".MuiSvgIcon-root": { color: "white" } }}>
+									{wrongmsg}
+								</Alert>
+							</Snackbar>
 						</Grid>
 					</Grid>
 				</form>

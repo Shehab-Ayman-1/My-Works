@@ -1,25 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { signInUser, registerUser } from "../../util/auth";
 
-export const Login = createAsyncThunk("profile/login", (user) => signInUser(user));
-export const Register = createAsyncThunk("profile/register", (user) => registerUser(user));
+export const LOGIN_AUTH = createAsyncThunk("profile/login", (user) => signInUser(user));
+export const REGISTER_AUTH = createAsyncThunk("profile/register", (user) => registerUser(user));
 
 const authSlice = createSlice({
 	name: "auth",
-	initialState: { auths: [], profile: {}, snackbar: false },
+	initialState: { auths: [], profile: {}, signinExist: true, signupExist: true },
 
 	reducers: {
-		NOT_EXIST: (state, action) => {
-			state.snackbar = action.payload;
-		},
-
-		REGISTER_AUTH: (state, action) => {
-			registerUser(action.payload)
-				.then(({ data }) => console.log(data))
-				.catch((err) => {
-					state.snackbar = true;
-					console.log("I Have An Error From Redux => " + err);
-				});
+		EXIST: (state, action) => {
+			state.signinExist = action.payload;
+			state.signupExist = action.payload;
 		},
 
 		LOGOUT_AUTH: (state, action) => {
@@ -38,49 +30,50 @@ const authSlice = createSlice({
 
 	extraReducers: {
 		// Login
-		[Login.pending]: (state, action) => {
+		[LOGIN_AUTH.pending]: (state, action) => {
 			window.localStorage.removeItem("profile");
 			state.profile = {};
 		},
-		[Login.fulfilled]: (state, action) => {
+		[LOGIN_AUTH.fulfilled]: (state, action) => {
 			if (action.payload) {
 				window.localStorage.setItem("profile", JSON.stringify(action.payload.data));
+				state.signinExist = true;
 				state.profile = action.payload.data;
 				window.location.href = "/";
 			} else {
-				state.snackbar = true;
+				state.signinExist = false;
 			}
 		},
-		[Login.rejected]: (state, action) => {
+		[LOGIN_AUTH.rejected]: (state, action) => {
 			window.localStorage.removeItem("profile");
 			console.log("Failed To Login Redux => " + action.error);
 			state.profile = {};
 		},
 
 		// Register
-		[Register.pending]: (state, action) => {
+		[REGISTER_AUTH.pending]: (state, action) => {
 			window.localStorage.removeItem("profile");
 			state.profile = {};
 			console.log("Pending Redux => " + action.type);
 		},
-		[Register.fulfilled]: (state, action) => {
+		[REGISTER_AUTH.fulfilled]: (state, action) => {
 			console.log("Success Redux => " + action.type);
 			if (action.payload) {
 				window.localStorage.setItem("profile", JSON.stringify(action.payload.data));
 				state.profile = action.payload.data;
-				state.snackbar = false;
+				state.signupExist = true;
 				window.location.href = "/";
 			} else {
-				state.snackbar = true;
+				state.signupExist = false;
 			}
 		},
-		[Register.rejected]: (state, action) => {
+		[REGISTER_AUTH.rejected]: (state, action) => {
 			window.localStorage.removeItem("profile");
-			console.log("Failed To Regiser Redux => " + action.error);
+			console.log("FROM REDUX, Failed To Regiser => " + action.error);
 			state.profile = {};
 		},
 	},
 });
 
-export const { NOT_EXIST, REGISTER_AUTH, LOGOUT_AUTH, GET_ALL_AUTH, GET_AUTH, DELETE_AUTH, UPDATE_AUTH } = authSlice.actions;
+export const { EXIST, LOGOUT_AUTH, GET_ALL_AUTH, GET_AUTH, DELETE_AUTH, UPDATE_AUTH } = authSlice.actions;
 export default authSlice.reducer;

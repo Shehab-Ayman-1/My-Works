@@ -7,18 +7,19 @@ import Form from "../../form/form";
 
 // Redux
 import { useDispatch } from "react-redux";
-import { DELETE_POST, DIS_LIKE_POST, LIKE_POST } from "../../../redux/reducers/posts-slice";
+import { DELETE_POST, LIKE_POST } from "../../../redux/reducers/posts-slice";
 
 // Material Ui
 import { Card, CardMedia, CardContent, CardActions, Button, Typography, Menu, MenuItem, Modal, Backdrop, Fade, Box } from "@mui/material";
-import { ThumbUpOffAltOutlined, ThumbDownOffAltOutlined, MoreHorizOutlined } from "@mui/icons-material/";
+import { ThumbUpOffAltOutlined, MoreHorizOutlined, EditLocationOutlined, ModeEditOutlined } from "@mui/icons-material/";
 
 // get The Time That The Post Was Created
 import moment from "moment";
 
 const Post = ({ post }) => {
-	const [updateState, setUpdateState] = useState(false);
+	const storage = JSON.parse(localStorage.getItem("profile"));
 	const dispatch = useDispatch();
+	const [updateState, setUpdateState] = useState(false);
 
 	// Card Dropdown
 	const [dropdown, setDropdown] = useState(null);
@@ -40,9 +41,8 @@ const Post = ({ post }) => {
 	// Delete Post
 	const deletePost = () => dispatch(DELETE_POST(post._id));
 
-	// Likes && Dislikes
-	const handleLikes = () => dispatch(LIKE_POST({ _id: post._id, post }));
-	const handleDisLikes = () => dispatch(DIS_LIKE_POST({ _id: post._id, post }));
+	// Like && Dislike
+	const handleLikes = () => dispatch(LIKE_POST({ id: post._id, storage }));
 
 	return (
 		<Card className="Card-Container">
@@ -125,11 +125,10 @@ const Post = ({ post }) => {
 
 			<CardActions className="card-footer">
 				<Button size="small" color="primary" onClick={handleLikes}>
-					<ThumbUpOffAltOutlined fontSize="small" sx={{ mr: 1 }} /> Like {post.likes}
+					<ThumbUpOffAltOutlined fontSize="small" sx={{ mr: 1 }} /> Like {post.likes.length}
 				</Button>
-
-				<Button size="small" variant="text" color="error" onClick={handleDisLikes}>
-					<ThumbDownOffAltOutlined fontSize="small" sx={{ mr: 1 }} /> Dislike {post.disLikes}
+				<Button size="small" color="success" onClick={handleOpenModel}>
+					<ModeEditOutlined fontSize="small" sx={{ mr: 1 }} /> Update Post
 				</Button>
 			</CardActions>
 		</Card>
