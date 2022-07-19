@@ -6,28 +6,31 @@ import "./slider.scss";
 import { Avatar } from "@mui/material";
 import { ArrowCircleLeftRounded, ArrowCircleRightRounded, CancelRounded } from "@mui/icons-material";
 
-const Slider = ({ images, slideIndex, setSlideIndex, setOpenSlider }) => {
-	const length = images.length - 1;
+const Slider = ({ photos, slideIndex, setSlideIndex, setOpenSlider }) => {
+	const length = photos.length - 1;
 
 	// Close Slider
-	const handleClose = () => setOpenSlider(false);
+	const handleClose = () => {
+		setOpenSlider(false);
+		document.querySelector("html").style.overflowY = "initial";
+	};
 
 	// Right Arrow
-	const handleRight = () => setSlideIndex(slideIndex === length ? slideIndex : slideIndex + 1);
+	const handleRight = () => setSlideIndex(slideIndex === length ? 0 : slideIndex + 1);
 
 	// Left Arrow
-	const handleLeft = () => setSlideIndex(slideIndex === 0 ? slideIndex : slideIndex - 1);
+	const handleLeft = () => setSlideIndex(slideIndex === 0 ? length : slideIndex - 1);
 
 	return (
 		<div className="slider">
 			<div className="avatar-container">
 				<span className="overlay" onClick={handleClose}></span>
-				<Avatar className="avatar" src={images[slideIndex].img} alt="slider-img" />
+				<Avatar className="avatar" src={photos[slideIndex].img} alt="slider-img" />
 			</div>
 			<div className="icons-container">
 				<CancelRounded className="close-icon" onClick={handleClose} />
-				<ArrowCircleRightRounded className={`right-arrow ${slideIndex === length && "disabled"}`} onClick={handleRight} />
-				<ArrowCircleLeftRounded className={`left-arrow ${slideIndex === 0 ? "disabled" : ""}`} onClick={handleLeft} />
+				<ArrowCircleRightRounded className={`right-arrow`} onClick={handleRight} />
+				<ArrowCircleLeftRounded className={`left-arrow`} onClick={handleLeft} />
 			</div>
 		</div>
 	);

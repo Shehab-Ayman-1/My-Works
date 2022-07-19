@@ -6,10 +6,9 @@ import { useNavigate } from "react-router-dom";
 // Material Ui
 import { Avatar, Button, Grid, Rating, Typography } from "@mui/material";
 
-const ListItem = ({ id, img, title, rate }) => {
+const ListItem = ({ img, hotel }) => {
 	const navigate = useNavigate();
-
-	const handleNavigate = () => navigate(`/hotels/${id}`);
+	const handleNavigate = () => navigate(hotel._id, { state: { hotel } });
 
 	return (
 		<Grid className="list-item" container spacing={2}>
@@ -20,26 +19,28 @@ const ListItem = ({ id, img, title, rate }) => {
 			<Grid className="body-grid" item xs={12} sm={8} lg={9}>
 				<div className="body-header">
 					<Typography className="header-title" variant="h5">
-						<span className="name">{title}</span>
-						<Rating className="rate" value={rate} name="read-only" />
+						<span className="name">{hotel?.title}</span>
+						<Rating className="rate" value={hotel?.rating} name="read-only" />
 					</Typography>
 					<Typography className="header-subtitle" variant="subtitle1">
-						500m From Center
+						{hotel?.name}
 					</Typography>
+					<Typography className="header-subtitle" variant="subtitle1">
+						{hotel?.distance}m From Center, In <span style={{ color: "#1976d2" }}>{hotel?.city}</span>
+					</Typography>
+					<Typography className="header-subtitle" variant="subtitle1"></Typography>
 				</div>
 
 				<div className="body-section">
 					<Button className="success-btn" variant="contained" color="success" sx={{ p: "5px 10px" }}>
-						Free Airport Taxi
+						{hotel?.featured ? "Free Airport Taxi" : "$150 For Taxi"}
 					</Button>
 					<Typography className="apartment" variant="h6">
-						Studio Apartment With Air Conditioning
+						Studio {hotel?.city} With Air Conditioning
 					</Typography>
 					<Typography className="price" variant="overline">
-						<span>
-							Enter Studio + 1 Bathroom + 21m<sup>2</sup> 1 full bed
-						</span>
-						<span>$112</span>
+						<span>{hotel?.description}</span>
+						<span>${hotel?.cheapestPrice}</span>
 					</Typography>
 				</div>
 
@@ -50,7 +51,7 @@ const ListItem = ({ id, img, title, rate }) => {
 					</Typography>
 					<Typography className="available" variant="overline">
 						<span>You Can Cancel Later, So Lock To This Great Price Today</span>
-						<Button className="primary-btn" variant="contained" color="primary" size="large" onClick={handleNavigate}>
+						<Button className="primary-btn" variant="contained" size="large" onClick={handleNavigate}>
 							See Available
 						</Button>
 					</Typography>

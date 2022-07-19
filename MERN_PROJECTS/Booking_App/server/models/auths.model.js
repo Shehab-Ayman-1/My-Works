@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const usersSchema = new mongoose.Schema(
 	{
+		avatar: { type: String, default: "" },
 		fName: { type: String, required: true },
 		lName: { type: String, required: true },
 		username: { type: String, required: true },

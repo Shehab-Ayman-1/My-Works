@@ -1,4 +1,4 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .feature-box {
 	width: 100%;
@@ -15,8 +15,5 @@
 	.box-heading {
 		@include absolute(tl, 20px, 20px);
 		color: white;
-		.description {
-			font-weight: bold;
-		}
 	}
 }

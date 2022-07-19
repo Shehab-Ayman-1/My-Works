@@ -1,4 +1,4 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .Navbar {
 	@include sticky(tl, 0, 0);
@@ -20,47 +20,40 @@
 					}
 				}
 			}
-			.togglers {
-				display: none;
-				@include width(xmd) {
-					display: block;
-				}
-				.navbar-icon {
-					cursor: pointer;
-					@include width(xmd) {
-						margin-left: 10px;
-					}
 
+			.right-section {
+				color: white;
+				width: 250px;
+				z-index: 1000;
+				.properties {
 					@include width(xmd) {
-						font-size: 22px;
+						display: block;
 					}
 				}
-			}
-			.right-section {
-				@include width(xmd) {
-					@include fixed(tr, 65px, 20px);
-					background-color: #1a237e;
-					color: white;
-					width: 250px;
-					z-index: 1000;
+				.togglers {
 					display: none;
-				}
-				.more {
-					@include flex(space-between, center);
-					gap: 1rem;
-					padding: 20px;
-				}
-				.properties {
-					text-align: center;
+					@include width(xmd) {
+						display: block;
+					}
 				}
 				.auth {
-					@extend .more;
+					@include flex(space-between, center);
+					gap: 10px;
+					.btn {
+						white-space: nowrap;
+						background-color: white;
+						color: black;
+						border-color: black;
+						&:hover {
+							background-color: #0d47a1;
+							color: white;
+						}
+					}
 				}
 			}
 		}
 		.header-bottom {
 			padding-top: 30px;
-
 			@include width(xmd) {
 				@include fixed(tl, 0, 0);
 				background-color: #1a237e;

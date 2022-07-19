@@ -5,25 +5,26 @@ import authModel from "../models/auths.model.js";
 
 export const REGISTER_AUTH = async (req, res) => {
 	try {
-		const { fName, lName, username, email, password, confirmedPassword } = req.body;
+		const { avatar, fName, lName, username, email, password, confirmedPassword } = req.body;
 
 		// [1] Check If The User Not Exist
 		const auth = await authModel.findOne({ email });
-		if (auth) return res.status(404).json({ REGISTER_AUTH: "This User Is Already Existing" });
+		if (auth) return res.status(404).json({ REGISTER_AUTH: "This Email Is Already Existing !" });
 
 		// [2] Check If The Passwords Are Matching
 		if (password !== confirmedPassword) return res.status(404).json({ REGISTER_AUTH: "Passwords Don't Match" });
 		const hash = await bcrypt.hash(password, 10);
 
 		// [3] Create The New User
-		const newAuth = new authModel({ fName, lName, username, email, password: hash });
+		const newAuth = new authModel({ avatar, fName, lName, username, email, password: hash });
 		const saveAuth = await newAuth.save();
 
 		// [4] Send The User To Database
-		res.status(200).json(saveAuth);
+		const { password: p, isAdmin, ...other } = saveAuth._doc;
+		res.status(200).json(other);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ REGISTER_AUTH: error });
+		res.status(404).json({ REGISTER_AUTH: "SERVER ERROR" });
 	}
 };
 
@@ -33,11 +34,11 @@ export const SIGNIN_AUTH = async (req, res) => {
 
 		// [1] Check If The User In The Database
 		const auth = await authModel.findOne({ email });
-		if (!auth) return res.status(404).json({ SIGNIN_AUTH: "This User Is Not Existing In The Databse.!" });
+		if (!auth) return res.status(404).json({ SIGNIN_AUTH: "Wronge Username OR Username Is Not Authonticated.!" });
 
 		// [2] Check If The User Password Password && The Database Password Are Matching
 		const checkPasswords = await bcrypt.compare(password, auth.password);
-		if (!checkPasswords) return res.status(404).json({ SIGNIN_AUTH: "The Password Is Not Current.!" });
+		if (!checkPasswords) return res.status(404).json({ SIGNIN_AUTH: "Wronge Password.!" });
 
 		// [3] Create The JWT Token With And Send Is To The Frontend
 		const token = JWT.sign({ id: auth._id, isAdmin: auth.isAdmin }, process.env.JWT_SECRET);
@@ -50,7 +51,7 @@ export const SIGNIN_AUTH = async (req, res) => {
 		res.status(201).json({ other });
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ SIGNIN: error });
+		res.status(404).json({ SIGNIN_AUTH: error });
 	}
 };
 

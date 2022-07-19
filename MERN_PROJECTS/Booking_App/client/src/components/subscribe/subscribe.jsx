@@ -3,7 +3,16 @@ import "./subscribe.scss";
 
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
 
-const Subscribe = ({ page }) => {
+const Subscribe = () => {
+	const services = [
+		"Mobile Version",
+		"Your Account",
+		"Make Changes Online To Your Booking",
+		"Customize Service Help",
+		"Browser An Offline",
+		"Book.com For Bussiness",
+	];
+
 	return (
 		<>
 			<Box className="subscribe-top">
@@ -27,24 +36,11 @@ const Subscribe = ({ page }) => {
 					List Your Properties
 				</Button>
 				<Grid className="services" container spacing={2}>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Mobile Version</Typography>
-					</Grid>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Your Account</Typography>
-					</Grid>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Make Changes Online To Your Booking</Typography>
-					</Grid>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Customize Service Help</Typography>
-					</Grid>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Browser An Offline</Typography>
-					</Grid>
-					<Grid item xs={6} md={4} lg={2}>
-						<Typography variant="subtitle2">Book.com For Bussiness</Typography>
-					</Grid>
+					{services.map((serve, i) => (
+						<Grid item xs={6} md={4} lg={2} key={i}>
+							<Typography variant="subtitle2">{serve}</Typography>
+						</Grid>
+					))}
 				</Grid>
 			</Box>
 		</>

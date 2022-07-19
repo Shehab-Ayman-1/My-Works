@@ -8,7 +8,7 @@ const Router = express.Router();
 Router.post("/register", REGISTER_AUTH);
 
 // SIGNIN HOTEL
-Router.post("/signin", SIGNIN_AUTH);
+Router.post("/login", SIGNIN_AUTH);
 
 // GET ALL
 Router.get("/", verifyAdmin, GET_AUTHS);

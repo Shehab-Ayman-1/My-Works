@@ -1,4 +1,4 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .slider {
 	@include fixed(tl, 0, 0);

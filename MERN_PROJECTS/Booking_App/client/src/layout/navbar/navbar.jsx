@@ -1,29 +1,40 @@
 // React
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./navbar.scss";
 
 // Material Ui
-import { AppBar, Avatar, Button, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
-import { AirplanemodeActive, DirectionsCarFilled, List, Cancel, Menu } from "@mui/icons-material/";
-import { HelpOutline, Style, LocalHotel, DirectionsCar } from "@mui/icons-material/";
+import { AppBar, Avatar, Button, Stack, ToggleButton, ToggleButtonGroup, Typography, Menu, MenuItem, Divider } from "@mui/material";
+import { AirplanemodeActive, DirectionsCarFilled, List, Cancel, PersonAdd, Settings, Logout } from "@mui/icons-material/";
+import { Style, LocalHotel, DirectionsCar } from "@mui/icons-material/";
 import { blue } from "@mui/material/colors";
 
-// Images
-import AmericanFlag from "../../images/american flag.webp";
+// Components
+import { Context } from "../../context/auth/context";
+import { LOGOUT } from "../../context/auth/actions";
 
 const Navbar = () => {
+	// Context
+	const context = useContext(Context);
+	const user = context?.state?.user;
+
+	// Dropdown
+	const [dropdown, setDropdown] = useState(null);
+	const openDropdown = Boolean(dropdown);
+	const handleOpenDrop = (event) => setDropdown(event.currentTarget);
+	const handleCloseDrop = () => setDropdown(null);
+
 	useEffect(() => {
-		window.onscroll = () => {
-			// Active Navbar
-			const bottom_header = document.querySelector("header .header-bottom");
-			console.log(bottom_header);
+		const bottom_header = document.querySelector("header .header-bottom");
+		const header = () => {
 			if (window.scrollY > 0) {
 				bottom_header.classList.add("hidden");
 			} else {
 				bottom_header.classList.remove("hidden");
 			}
 		};
+		window.onscroll = header;
+		window.onload = header;
 	}, []);
 
 	// Toggle Buttons
@@ -31,9 +42,11 @@ const Navbar = () => {
 	const handleToggleButtons = (event, newCurrent) => setCurrent(newCurrent);
 
 	// Navbar && Properties
-	const handleNavbar = () => document.querySelector(".header .right-section").classList.toggle("show-display");
 	const handleProperties = () => document.querySelector(".header .header-bottom").classList.toggle("show-display");
 	const handleCloseProperties = () => document.querySelector(".header .header-bottom").classList.remove("show-display");
+
+	// Logout
+	const handleLogout = () => context.dispatch(LOGOUT());
 
 	return (
 		<AppBar className="header" position="static" sx={{ bgcolor: blue[900], p: 2, boxShadow: "none" }}>
@@ -43,36 +56,40 @@ const Navbar = () => {
 					Hotel Booking
 				</Typography>
 
-				<div className="togglers">
-					<List className="navbar-icon" onClick={handleProperties} />
-					<Menu className="navbar-icon" onClick={handleNavbar} />
-				</div>
-
 				<Stack className="right-section" direction="row" justifyContent="flex-end" alignItems="center" gap={2}>
-					<div className="more">
-						<span style={{ fontSize: "14px" }}>Plan</span>
-						<Avatar src={AmericanFlag} alt="image-flag" sx={{ width: 30, height: 30, cursor: "pointer" }} />
-						<HelpOutline />
-					</div>
 					<div className="properties">
-						<Button variant="outlined" color="primary" size="small" sx={{ color: "white", borderColor: "white" }}>
+						<Button
+							component={Link}
+							to="/hotels"
+							variant="outlined"
+							color="primary"
+							size="small"
+							sx={{ color: "white", borderColor: "white", whiteSpace: "nowrap" }}>
 							List Your Property
 						</Button>
 					</div>
-					<div className="auth">
-						<Button
-							variant="contained"
-							size="small"
-							sx={{ bgcolor: "white", color: "black", borderColor: "black", "&:hover": { color: "white" } }}>
-							Sign Up
-						</Button>
-						<Button
-							variant="contained"
-							size="small"
-							sx={{ bgcolor: "white", color: "black", borderColor: "black", "&:hover": { color: "white" } }}>
-							Sign In
-						</Button>
-					</div>
+					{context.state.isSignin && (
+						<div className="more">
+							<Avatar
+								src={user?.img}
+								alt="image-flag"
+								sx={{ width: 30, height: 30, cursor: "pointer" }}
+								onClick={handleOpenDrop}
+							/>
+						</div>
+					)}
+
+					{!context.state.isSignin && (
+						<div className="auth">
+							<Button className="btn" component={Link} to="/auth/register" variant="contained" size="small">
+								Sign Up
+							</Button>
+							<Button className="btn" component={Link} to="/auth/login" variant="contained" size="small">
+								Sign In
+							</Button>
+						</div>
+					)}
+					<List className="togglers" onClick={handleProperties} sx={{ cursor: "pointer" }} />
 				</Stack>
 			</Stack>
 
@@ -101,6 +118,28 @@ const Navbar = () => {
 					</ToggleButton>
 				</ToggleButtonGroup>
 			</div>
+
+			<Menu anchorEl={dropdown} open={openDropdown} onClose={handleCloseDrop}>
+				<MenuItem>
+					<Avatar sx={{ width: 32, height: 32, mr: 1 }}> {user?.fName?.charAt(0)} </Avatar> {user?.username}
+				</MenuItem>
+				<MenuItem>
+					<Avatar sx={{ width: 32, height: 32, mr: 1 }} src={user?.avatar} alt="avatar-img" /> {user?.email}
+				</MenuItem>
+				<Divider />
+				<MenuItem component={Link} to="/auth/login">
+					<PersonAdd fontSize="small" sx={{ color: "gray", width: 0.1, mr: 1 }} />
+					Add another account
+				</MenuItem>
+				<MenuItem>
+					<Settings fontSize="small" sx={{ color: "gray", width: 0.1, mr: 1 }} />
+					Settings
+				</MenuItem>
+				<MenuItem onClick={handleLogout}>
+					<Logout fontSize="small" sx={{ color: "gray", width: 0.1, mr: 1 }} />
+					Logout
+				</MenuItem>
+			</Menu>
 		</AppBar>
 	);
 };

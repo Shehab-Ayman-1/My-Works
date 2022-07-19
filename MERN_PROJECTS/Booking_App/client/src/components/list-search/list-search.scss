@@ -1,10 +1,21 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .list-search {
 	@include sticky(tl, 120px, 0);
 	background: #f3af02;
 	padding: 16px;
 	margin-top: 10px;
+	.MuiAutocomplete-root {
+		background-color: white !important;
+		cursor: pointer !important;
+		.MuiInputLabel-root {
+			top: -5px;
+		}
+		input {
+			border: none !important;
+			cursor: pointer !important;
+		}
+	}
 	input {
 		background-color: white;
 		width: 70px;

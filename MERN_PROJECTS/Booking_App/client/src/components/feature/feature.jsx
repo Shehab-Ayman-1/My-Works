@@ -1,9 +1,11 @@
+// React
 import React from "react";
 import "./feature.scss";
 
+// Material Ui
 import { Avatar, Box, Typography } from "@mui/material";
 
-const Feature = ({ img, title, description }) => {
+const Feature = ({ img, title, length }) => {
 	return (
 		<Box className="feature-box">
 			<Avatar className="avatar" src={img} alt="avatar-img" />
@@ -12,7 +14,7 @@ const Feature = ({ img, title, description }) => {
 					{title}
 				</Typography>
 				<Typography variant="body1" className="description" data-stroke="black">
-					123 Properties
+					{length} Properties
 				</Typography>
 			</div>
 		</Box>

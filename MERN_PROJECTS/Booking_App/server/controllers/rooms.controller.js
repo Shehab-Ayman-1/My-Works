@@ -4,12 +4,19 @@ import roomModel from "../models/rooms.model.js";
 
 export const GET_ROOM = async (req, res) => {
 	try {
-		const { roomID } = req.params;
+		// [1] Get The Hotel
+		const { roomID: id } = req.params;
+		if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ GET_ROOMS: "Hotel ID Is Not Current.!" });
+		const myHotel = await hotelModel.findById(id);
 
-		if (!mongoose.Types.ObjectId.isValid(roomID)) return res.status(404).json({ GET_ROOM: "Room ID Is Not Defined.!" });
+		// [2] Get Promise Of Hotel Rooms
+		const myRooms = myHotel.rooms.map((roomID) => roomModel.findById(roomID));
 
-		const room = await roomModel.findById(roomID);
-		res.status(201).json(room);
+		// [3] Get List Of Hotel Rooms By Promise
+		const listOfRooms = await Promise.all(myRooms);
+
+		// [4] Send The Rooms To The Frontend
+		res.status(201).json(listOfRooms);
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({ GET_ROOM: error });
@@ -70,6 +77,28 @@ export const UPDATE_ROOM = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({ UPDATE_ROOM: error });
+	}
+};
+
+export const UPDATE_AVAILABLE_ROOMS = async (req, res) => {
+	try {
+		// [1] Get The Room ID
+		const { roomID } = req.params;
+		const { dates } = req.body;
+
+		// [2] Check If The Room ID Is Valid
+		if (!mongoose.Types.ObjectId.isValid(roomID)) return res.status(404).json({ UPDATE_ROOM_AVAILABILITY: "Room ID Is Not Defined.!" });
+
+		// [3] Update The UnAvailableRooms
+		await roomModel.updateOne({ "roomNumbers._id": roomID }, { $push: { "roomNumbers.$.unavailableDates": dates } });
+
+		console.log(new Date(dates[0]).getTime());
+
+		// [4] Send The UnAvailableRooms To The Frontend
+		res.status(201).json("UnAvailableDates Rooms Was Updated.");
+	} catch (error) {
+		console.log(error);
+		res.status(404).json({ UPDATE_ROOM_AVAILABILITY: error });
 	}
 };
 

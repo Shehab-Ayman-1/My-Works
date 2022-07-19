@@ -1,11 +1,15 @@
 // React
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link } from "react-router-dom";
 import "./searchbar.scss";
 
 // Material Ui
 import { CalendarMonth, LocalHotel } from "@mui/icons-material";
-import { Button, Grid, Menu, Stack, Typography } from "@mui/material";
+import { Autocomplete, Button, Grid, Menu, Stack, TextField, Typography } from "@mui/material";
+
+// Components
+import { Context } from "../../context/hotel/context";
+import { NEW_SEARCH } from "../../context/hotel/actions";
 
 // Date Range
 import { DateRange } from "react-date-range";
@@ -14,62 +18,73 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 const Searchbar = () => {
-	const navigate = useNavigate();
-	// onChange Input STATE
-	const [destination, setDestination] = useState("");
+	const context = useContext(Context);
+	const given = context.state;
+
+	// Handle Despatch
+	const handleDispatch = (name, value, isOptions = false) => {
+		if (isOptions) {
+			context.dispatch(NEW_SEARCH({ ...given, options: { ...given.options, [name]: value } }));
+		} else {
+			context.dispatch(NEW_SEARCH({ ...given, [name]: value }));
+		}
+	};
 
 	// React Date Range
-	const [date, setDate] = useState([{ startDate: new Date(), endDate: new Date(), key: "selection" }]);
-
 	const [calender, setCalender] = useState(null);
 	const openCalender = Boolean(calender);
 	const handleOpenCalender = (event) => setCalender(event.currentTarget);
 	const handleCloseCalender = () => setCalender(null);
 
 	// Right Section Search Bar
-	const [options, setOptions] = useState({ adult: 0, children: 0, room: 0 });
 	const [OptionsMenu, setOptionMenu] = useState(null);
 	const openOptions = Boolean(OptionsMenu);
 	const handleOpenOptions = (event) => setOptionMenu(event.currentTarget);
 	const handleCloseOptions = () => setOptionMenu(null);
-	const handleCreament = (name, operation) => {
-		if (operation === "in") {
-			setOptions({ ...options, [name]: (options[name] += 1) });
-		} else {
-			setOptions({ ...options, [name]: options[name] > 1 ? (options[name] -= 1) : options[name] });
-		}
-	};
 
 	// Navigate To Search Page
-	const handleChange = (event) => setDestination(event.target.value);
-	const handleSearch = () => navigate("/hotels", { state: { destination, date: date[0], options } });
 
 	return (
 		<>
 			<Grid container className="search-bar" spacing={2}>
 				<Grid className="left-section section" item xs={12} sm={6} lg={3} sx={{ pb: 2 }}>
 					<LocalHotel sx={{ mr: 2 }} />
-					<input type="text" placeholder="Where Are You Going ?" value={destination} onChange={handleChange} />
+
+					<Autocomplete
+						options={given.selectOptions}
+						value={given.destination}
+						freeSolo
+						fullWidth
+						renderInput={(ev) => (
+							<TextField
+								{...ev}
+								variant="standard"
+								label="Where Are You Going ?"
+								onChange={(e) => handleDispatch("destination", e.target.value)}
+							/>
+						)}
+						onChange={(e, value) => handleDispatch("destination", value)}
+					/>
 				</Grid>
 
 				<Grid className="meddle-section section" item xs={12} sm={6} lg={3} sx={{ pb: 2 }} onClick={handleOpenCalender}>
 					<CalendarMonth sx={{ mr: 2 }} />
 					<Typography variant="body2" className="date-to-date">
-						{format(date[0].startDate, "MM/dd/yyyy")} | {format(date[0].endDate, "MM/dd/yyyy")}
+						{format(given.date[0].startDate, "MM/dd/yyyy")} | {format(given.date[0].endDate, "MM/dd/yyyy")}
 					</Typography>
 				</Grid>
 
 				<Grid className="right-section section" item xs={12} sm={6} lg={4} sx={{ pb: 2 }} onClick={handleOpenOptions}>
 					<LocalHotel sx={{ mr: 2 }} />
 					<span className="right-option">
-						<span>{options.adult} adult </span>
-						<span>{options.children} children </span>
-						<span>{options.room} room</span>
+						<span>{given.options.adult} adult </span>
+						<span>{given.options.children} children </span>
+						<span>{given.options.room} room</span>
 					</span>
 				</Grid>
 
-				<Grid className="submit-btn" item xs={12} sm={6} lg={2} sx={{ pb: 2 }} onClick={handleSearch}>
-					<Button className="btn" variant="contained" color="primary" size="large">
+				<Grid className="submit-btn" item xs={12} sm={6} lg={2} sx={{ pb: 2 }}>
+					<Button component={Link} to="/hotels" className="btn" variant="contained" color="primary" size="large">
 						Search
 					</Button>
 				</Grid>
@@ -81,19 +96,17 @@ const Searchbar = () => {
 					<div>
 						<Button
 							variant="contained"
-							color="primary"
 							size="small"
 							sx={{ marginInline: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("adult", "de")}>
+							onClick={() => handleDispatch("adult", (given.options.adult -= 1), true)}>
 							-
 						</Button>
-						{options.adult}
+						{given.options.adult}
 						<Button
 							variant="contained"
-							color="primary"
 							size="small"
 							sx={{ ml: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("adult", "in")}>
+							onClick={() => handleDispatch("adult", (given.options.adult += 1), true)}>
 							+
 						</Button>
 					</div>
@@ -107,16 +120,16 @@ const Searchbar = () => {
 							color="primary"
 							size="small"
 							sx={{ marginInline: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("children", "de")}>
+							onClick={() => handleDispatch("children", (given.options.children -= 1), true)}>
 							-
 						</Button>
-						{options.children}
+						{given.options.children}
 						<Button
 							variant="contained"
 							color="primary"
 							size="small"
 							sx={{ ml: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("children", "in")}>
+							onClick={() => handleDispatch("children", (given.options.children += 1), true)}>
 							+
 						</Button>
 					</div>
@@ -130,16 +143,16 @@ const Searchbar = () => {
 							color="primary"
 							size="small"
 							sx={{ marginInline: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("room", "de")}>
+							onClick={() => handleDispatch("room", (given.options.room += 1), true)}>
 							-
 						</Button>
-						{options.room}
+						{given.options.room}
 						<Button
 							variant="contained"
 							color="primary"
 							size="small"
 							sx={{ ml: 2, minWidth: "14px" }}
-							onClick={() => handleCreament("room", "in")}>
+							onClick={() => handleDispatch("room", (given.options.room += 1), true)}>
 							+
 						</Button>
 					</div>
@@ -148,9 +161,9 @@ const Searchbar = () => {
 
 			<Menu anchorEl={calender} open={openCalender} onClose={handleCloseCalender}>
 				<DateRange
-					onChange={(e) => setDate([e.selection])}
+					onChange={(e) => handleDispatch("date", [e.selected])}
 					className="calendar"
-					ranges={date}
+					ranges={given.date}
 					editableDateInputs={true}
 					moveRangeOnFirstSelection={false}
 				/>

@@ -1,34 +1,63 @@
 // React
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./list.scss";
+import { useLocation } from "react-router";
 
 // Material Ui
 import { Avatar, Button, Container, Grid, Typography } from "@mui/material";
 import { PinDrop } from "@mui/icons-material";
 
 // Components
+import { Context as HotelContext } from "../../context/hotel/context";
+import { Context as AuthContext } from "../../context/auth/context";
 import Navbar from "../../layout/navbar/navbar";
-import Subscribe from "../../components/subscribe/subscribe";
 import Footer from "../../layout/footer/footer";
+import Slider from "../../components/slider/slider";
+import ReserveModal from "../../components/list-reserve/list-reserve";
+import Subscribe from "../../components/subscribe/subscribe";
 
 // Images
-import feature1 from "../../images/feature 1.webp";
-import feature2 from "../../images/feature 2.webp";
-import feature3 from "../../images/feature 3.webp";
-import furnitur1 from "../../images/furnitur 1.webp";
-import furnitur2 from "../../images/furnitur 2.webp";
-import furnitur3 from "../../images/furnitur 3.webp";
-import Slider from "../../components/slider/slider";
+import feature1 from "../../assets/images/feature 1.webp";
+import feature2 from "../../assets/images/feature 2.webp";
+import feature3 from "../../assets/images/feature 3.webp";
+import furnitur1 from "../../assets/images/furnitur 1.webp";
+import furnitur2 from "../../assets/images/furnitur 2.webp";
+import furnitur3 from "../../assets/images/furnitur 3.webp";
 
 const List = () => {
-	const images = [{ img: feature1 }, { img: feature2 }, { img: feature3 }, { img: furnitur1 }, { img: furnitur2 }, { img: furnitur3 }];
+	// Context
+	const hotelContext = useContext(HotelContext);
+	const authContext = useContext(AuthContext);
+	const { date, options } = hotelContext.state;
+	const isSignin = authContext.state.isSignin;
+
+	// Location
+	const location = useLocation();
+	const { _id, title, address, city, distance, cheapestPrice, rating } = location.state.hotel;
+
+	// Slider
+	const photos = [{ img: feature1 }, { img: feature2 }, { img: feature3 }, { img: furnitur1 }, { img: furnitur2 }, { img: furnitur3 }];
 	const [slideIndex, setSlideIndex] = useState(3);
 	const [openSlider, setOpenSlider] = useState(false);
-
 	const handleSlider = (i) => {
 		setSlideIndex(i);
 		setOpenSlider(true);
-		document.body.style.overflow = "hidden";
+	};
+
+	// Get Days
+	const deffDays = () => {
+		const deffTime = Math.abs(date[0]?.startDate - date[0]?.endDate);
+		const deffDays = Math.ceil(deffTime / (1000 * 60 * 60 * 24));
+		return deffDays;
+	};
+
+	// Reserving Modal
+	const [openReserve, setOpenReserve] = useState(false);
+	const handleOpenReserve = () => setOpenReserve(true);
+	const handleCloseReserve = () => setOpenReserve(false);
+	const handleReserving = () => {
+		if (isSignin) handleOpenReserve();
+		else handleCloseReserve();
 	};
 
 	return (
@@ -37,35 +66,36 @@ const List = () => {
 				<Navbar />
 			</div>
 
-			{openSlider && <Slider images={images} slideIndex={slideIndex} setSlideIndex={setSlideIndex} setOpenSlider={setOpenSlider} />}
+			{openSlider && <Slider photos={photos} slideIndex={slideIndex} setSlideIndex={setSlideIndex} setOpenSlider={setOpenSlider} />}
 
 			<Container className="list-container" maxWidth="lg">
 				<div className="header">
 					<div className="title">
 						<Typography className="name" variant="h4">
-							Tower Street Apartment
+							{title}
 						</Typography>
-						<Button variant="contained" color="primary" size="large">
+						<Button variant="contained" color="primary" size="large" onClick={handleReserving}>
 							Reserve OR Book Now !
 						</Button>
 					</div>
 
 					<Typography className="subtitle" variant="body2">
-						<PinDrop className="icon" /> 5 Bas2towa Old Town, 33-3352 Krokow, Poland
+						<PinDrop className="icon" /> {address}
 					</Typography>
 
 					<Typography className="rating" variant="h6">
-						Excellent Location - 500m From Center
+						{rating === 0 ? "Bad" : rating < 2.5 ? "Nice" : rating >= 2.5 ? "Good" : rating >= 4.5 ? "Excellent" : ""} Location
+						- {distance}m From Center, 2Bathroom, 1Balcont, More...
 					</Typography>
 
 					<Typography className="offer" variant="h6">
-						Book A Stay Over $114 At This Property And Get A Free Airport Taxi
+						Book A Stay Over ${cheapestPrice} At This Property And Get A Free Airport Taxi
 					</Typography>
 				</div>
 
 				<div className="body">
 					<Grid className="images-container" container spacing={2}>
-						{images.map((obj, i) => (
+						{photos.map((obj, i) => (
 							<Grid item xs={12} md={6} lg={4} key={i}>
 								<Avatar className="avatar" src={obj.img} alt="list-img" onClick={() => handleSlider(i)} />
 							</Grid>
@@ -74,11 +104,11 @@ const List = () => {
 					<Grid className="stay-grid" container spacing={2}>
 						<Grid className="left-section" item xs={12} md={9}>
 							<Typography className="title" variant="h6">
-								Stay in the heart of Madrid
+								Stay in the heart of {city}
 							</Typography>
 							<Typography className="content" variant="body2">
 								Offering free WiFi and free private parking, Piso moderno y acogedor en el centro de la ciudad is located in
-								Madrid, within just a 2-minute walk of Puerta del Sol. The property is an 8-minute walk from Mercado San
+								{city}, within just a 2-minute walk of Puerta del Sol. The property is an 8-minute walk from Mercado San
 								Miguel and half a kilometer from Prado Museum. The air-conditioned apartment is composed of 1 separate
 								bedroom, a living room, a fully equipped kitchen, and 1 bathroom. A flat-screen TV is provided.
 							</Typography>
@@ -86,15 +116,17 @@ const List = () => {
 
 						<Grid className="right-section" item xs={12} md={3}>
 							<Typography className="title" variant="body2">
-								Perfect For A 9 Night Stay!
+								Perfect For A {deffDays()} Night Stay!
 							</Typography>
 							<Typography className="content" variant="subtitle2">
-								Located In The Real Heart Of Madried The Property Has An Excellent Location Score Of 4.8
+								Located In The Real Heart Of Madried The Property Has An
+								{rating === 0 ? "Bad" : rating < 2.5 ? "Nice" : rating >= 2.5 ? "Good" : rating >= 4.5 ? "Excellent" : ""}
+								Location Score Of {rating}
 							</Typography>
 							<Typography className="price" variant="h6">
-								<span>$935</span> <span>( 9 Nights )</span>
+								<span>${+cheapestPrice * +options.room * +deffDays()}</span> <span>( {deffDays()} Nights )</span>
 							</Typography>
-							<Button variant="contained" color="primary" fullWidth>
+							<Button variant="contained" color="primary" fullWidth onClick={handleReserving}>
 								Reserve Your Apartment Stay
 							</Button>
 						</Grid>
@@ -110,6 +142,8 @@ const List = () => {
 					<Footer />
 				</Container>
 			</div>
+
+			<ReserveModal id={_id} isSignin={isSignin} openReserve={openReserve} handleCloseReserve={handleCloseReserve} />
 		</div>
 	);
 };

@@ -1,24 +1,29 @@
 // React
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./list-search.scss";
-import { Button, Menu, MenuItem, Typography } from "@mui/material";
+
+// Components
+import { Autocomplete, Button, Menu, TextField, Typography } from "@mui/material";
 
 // React Data Range
 import { DateRange } from "react-date-range";
 import { format } from "date-fns";
+import { Context } from "../../context/hotel/context";
+import { NEW_SEARCH } from "../../context/hotel/actions";
 
-const ListSearch = ({ destination, date, options }) => {
-	// States
-	const [state, setState] = useState({ destination, date, options, min: 0, max: 0 });
-	const [option, setOption] = useState(options);
-	const handleChange = (event) => {
-		const key = Object.keys(state.options).filter((key) => key === event.target.name)[0];
-		const value = event.target.value;
+const ListSearch = ({ UseReFetch }) => {
+	const context = useContext(Context);
+	const given = context.state;
 
-		if (key === "adult" || key === "children" || key === "room") {
-			setOption({ ...option, [key]: value });
+	// Refresh The Data
+	const handleSearch = () => UseReFetch();
+
+	// Handle Despatch
+	const handleDispatch = (name, value, isOptions = false) => {
+		if (isOptions) {
+			context.dispatch(NEW_SEARCH({ ...given, options: { ...given.options, [name]: value } }));
 		} else {
-			setState({ ...state, [event.target.name]: value });
+			context.dispatch(NEW_SEARCH({ ...given, [name]: value }));
 		}
 	};
 
@@ -27,6 +32,14 @@ const ListSearch = ({ destination, date, options }) => {
 	const openCalender = Boolean(calender);
 	const handleOpenCalender = (event) => setCalender(event.currentTarget);
 	const handleCloseCalender = () => setCalender(null);
+
+	// Change Fields State
+	const handleChange = (event) => {
+		const name = event.target.name;
+		const value = event.target.value;
+		if (name === "adult" || name === "children" || name === "room") handleDispatch(name, +value, true);
+		else handleDispatch(name, value);
+	};
 
 	return (
 		<div className="list-search">
@@ -38,50 +51,55 @@ const ListSearch = ({ destination, date, options }) => {
 				Destination
 			</Typography>
 
-			<input variant="filled" name="destination" value={state.destination} label="Destination" onChange={handleChange} />
+			<Autocomplete
+				options={given.selectOptions}
+				value={given.destination}
+				freeSolo
+				fullWidth
+				renderInput={(ev) => <TextField {...ev} onChange={(e) => handleDispatch("destination", e.target.value)} />}
+				onChange={(e, value) => handleDispatch("destination", value)}
+			/>
 
 			<div className="check-date">
 				<Typography className="subtitle" variant="overline">
 					Check In Date
 				</Typography>
 				<Typography className="date" variant="h6" onClick={handleOpenCalender}>
-					{format(state.date.startDate, "MM/dd/yyyy")} : {format(state.date.endDate, "MM/dd/yyyy")}
+					{format(given.date[0].startDate, "MM/dd/yyyy")} : {format(given.date[0].endDate, "MM/dd/yyyy")}
 				</Typography>
 			</div>
 
 			<div className="row">
 				<span className="field-title">Min Price : </span>
-				<input type="number" name="min" value={state.min} min="0" onChange={handleChange} />
+				<input type="number" name="min" value={given.min} min="0" onChange={handleChange} />
 			</div>
 			<div className="row">
 				<span className="field-title">Max Price : </span>
-				<input type="number" name="max" value={state.max} min="0" onChange={handleChange} />
+				<input type="number" name="max" value={given.max} min="0" onChange={handleChange} />
 			</div>
 			<div className="row">
 				<span className="field-title">adult : </span>
-				<input type="number" name="adult" value={option.adult} min="0" onChange={handleChange} />
+				<input type="number" name="adult" value={given.options.adult} min="0" onChange={handleChange} />
 			</div>
 			<div className="row">
 				<span className="field-title">children : </span>
-				<input type="number" name="children" value={option.children} min="0" onChange={handleChange} />
+				<input type="number" name="children" value={given.options.children} min="0" onChange={handleChange} />
 			</div>
 			<div className="row">
 				<span className="field-title">room : </span>
-				<input type="number" name="room" value={option.room} min="0" onChange={handleChange} />
+				<input type="number" name="room" value={given.options.room} min="0" onChange={handleChange} />
 			</div>
-			<Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+			<Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handleSearch}>
 				Search
 			</Button>
 			<Menu anchorEl={calender} open={openCalender} onClose={handleCloseCalender}>
-				<MenuItem>
-					<DateRange
-						className="calendar"
-						ranges={[state.date]}
-						editableDateInputs={true}
-						moveRangeOnFirstSelection={false}
-						onChange={(event) => setState({ ...state, date: event.selection })}
-					/>
-				</MenuItem>
+				<DateRange
+					className="calendar"
+					ranges={given.date}
+					editableDateInputs={true}
+					moveRangeOnFirstSelection={false}
+					onChange={(event) => handleDispatch("date", [event.selected])}
+				/>
 			</Menu>
 		</div>
 	);

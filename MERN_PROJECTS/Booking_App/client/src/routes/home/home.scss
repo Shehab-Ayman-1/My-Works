@@ -1,4 +1,4 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .home-page {
 	.front-container {
@@ -12,7 +12,7 @@
 				@include width(lg) {
 					margin-top: 55px;
 				}
-				@include width(xmd) {
+				@include width(xsm) {
 					width: 96%;
 					margin: auto;
 					margin-top: 135px;

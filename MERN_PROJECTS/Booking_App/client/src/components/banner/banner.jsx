@@ -1,8 +1,15 @@
-import React from "react";
+// React
+import React, { useContext } from "react";
 import "./banner.scss";
+import { Link } from "react-router-dom";
+
+// Material Ui
+import { Context } from "../../context/auth/context";
 import { Button, Typography } from "@mui/material";
 
 const Searchbar = () => {
+	const isSignin = useContext(Context).state.isSignin;
+
 	return (
 		<>
 			<Typography className="heading" variant="h3">
@@ -11,11 +18,13 @@ const Searchbar = () => {
 			<Typography className="content" variant="body1">
 				Get Rewards For Your Travels - Saving Of 10% Or More With A Free Book.com
 			</Typography>
-			<Typography className="button">
-				<Button variant="contained" color="primary" size="large">
-					Signin / Register
-				</Button>
-			</Typography>
+			{!isSignin && (
+				<Typography className="button">
+					<Button component={Link} to="/auth/login" variant="contained" color="primary" size="large">
+						Signin / Register
+					</Button>
+				</Typography>
+			)}
 		</>
 	);
 };

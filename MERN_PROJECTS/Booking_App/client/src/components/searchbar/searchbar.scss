@@ -1,4 +1,4 @@
-@use "../../scss/mixins" as *;
+@use "../../assets/scss/mixins" as *;
 
 .search-bar {
 	background: white;
@@ -7,11 +7,22 @@
 	@include width(md) {
 		margin-left: -8px !important;
 	}
+	.MuiInput-underline {
+		&::before {
+			border: 0;
+		}
+		&:hover::before {
+			border: 0 !important;
+		}
+	}
 	.section {
+		@include flex(flex-start, center);
 		color: get(dark-text);
 		width: 100%;
-		display: flex;
 		&.left-section {
+			.MuiInputLabel-formControl {
+				top: -10px;
+			}
 			input {
 				width: 100%;
 				font-size: 14px;
