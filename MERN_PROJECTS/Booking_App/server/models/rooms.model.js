@@ -6,9 +6,9 @@ const roomsSchema = new mongoose.Schema(
 		description: String,
 		price: Number,
 		maxPeople: Number,
-		roomNumbers: [{ number: { type: Number }, unavailableDates: { type: [Date] } }],
+		roomNumbers: [{ number: { type: Number }, unavailableDates: { type: [Date], default: [] } }],
 	},
 	{ timestamps: true }
 );
 
-export default mongoose.model("rooms-database", roomsSchema);
+export default mongoose.model("Available-Room", roomsSchema);

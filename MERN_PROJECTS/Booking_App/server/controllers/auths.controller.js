@@ -5,7 +5,7 @@ import authModel from "../models/auths.model.js";
 
 export const REGISTER_AUTH = async (req, res) => {
 	try {
-		const { avatar, fName, lName, username, email, password, confirmedPassword } = req.body;
+		const { avatar, fName, lName, age, username, email, password, confirmedPassword } = req.body;
 
 		// [1] Check If The User Not Exist
 		const auth = await authModel.findOne({ email });
@@ -16,7 +16,7 @@ export const REGISTER_AUTH = async (req, res) => {
 		const hash = await bcrypt.hash(password, 10);
 
 		// [3] Create The New User
-		const newAuth = new authModel({ avatar, fName, lName, username, email, password: hash });
+		const newAuth = new authModel({ avatar, fName, lName, age, username, email, password: hash });
 		const saveAuth = await newAuth.save();
 
 		// [4] Send The User To Database
@@ -24,7 +24,7 @@ export const REGISTER_AUTH = async (req, res) => {
 		res.status(200).json(other);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ REGISTER_AUTH: "SERVER ERROR" });
+		res.status(404).json({ REGISTER_AUTH: "SERVER ERROR", error });
 	}
 };
 
@@ -40,18 +40,18 @@ export const SIGNIN_AUTH = async (req, res) => {
 		const checkPasswords = await bcrypt.compare(password, auth.password);
 		if (!checkPasswords) return res.status(404).json({ SIGNIN_AUTH: "Wronge Password.!" });
 
-		// [3] Create The JWT Token With And Send Is To The Frontend
+		// [3] Create The JWT Token And Send Is To The Frontend
 		const token = JWT.sign({ id: auth._id, isAdmin: auth.isAdmin }, process.env.JWT_SECRET);
 
 		// [4] Send The Token In The Cookie
 		const cookie = res.cookie("access_token", token, { httpOnly: true });
 
-		// [4] Send The User To The Server
+		// [5] Send The User With The Token To The Frontend
 		const { password: p, isAdmin, ...other } = auth._doc;
-		res.status(201).json({ other });
+		cookie.status(201).json({ other, isAdmin });
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ SIGNIN_AUTH: error });
+		res.status(404).json({ SIGNIN_AUTH: "SERVER ERROR", error });
 	}
 };
 
@@ -65,7 +65,7 @@ export const GET_AUTH = async (req, res) => {
 		res.status(201).json(auth);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ GET_AUTH: error });
+		res.status(404).json({ GET_AUTH: "SERVER ERROR", error });
 	}
 };
 
@@ -75,7 +75,7 @@ export const GET_AUTHS = async (req, res) => {
 		res.status(201).json(Auths);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ GET_AUTHS: error });
+		res.status(404).json({ GET_AUTHS: "SERVER ERROR", error });
 	}
 };
 
@@ -90,14 +90,13 @@ export const UPDATE_AUTH = async (req, res) => {
 		res.status(201).json(updatedAuth);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ UPDATE_AUTH: error });
+		res.status(404).json({ UPDATE_AUTH: "SERVER ERROR", error });
 	}
 };
 
 export const DELETE_AUTH = async (req, res) => {
 	try {
 		const { id } = req.params;
-		console.log(id);
 
 		if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({ UPDATE_AUTH: "This ID Is Not Defined.!" });
 
@@ -106,6 +105,6 @@ export const DELETE_AUTH = async (req, res) => {
 		res.status(201).json({ DELETE_AUTH: "Successfully Deleting This User.!" });
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ DELETE_AUTH: error });
+		res.status(404).json({ DELETE_AUTH: "SERVER ERROR", error });
 	}
 };

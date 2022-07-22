@@ -8,11 +8,11 @@ import { Autocomplete, Button, Menu, TextField, Typography } from "@mui/material
 // React Data Range
 import { DateRange } from "react-date-range";
 import { format } from "date-fns";
-import { Context } from "../../context/hotel/context";
+import { HotelContext } from "../../context/hotel/context";
 import { NEW_SEARCH } from "../../context/hotel/actions";
 
 const ListSearch = ({ UseReFetch }) => {
-	const context = useContext(Context);
+	const context = useContext(HotelContext);
 	const given = context.state;
 
 	// Refresh The Data

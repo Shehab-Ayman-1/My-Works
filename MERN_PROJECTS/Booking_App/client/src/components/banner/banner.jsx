@@ -4,11 +4,11 @@ import "./banner.scss";
 import { Link } from "react-router-dom";
 
 // Material Ui
-import { Context } from "../../context/auth/context";
+import { AuthContext } from "../../context/auth/context";
 import { Button, Typography } from "@mui/material";
 
 const Searchbar = () => {
-	const isSignin = useContext(Context).state.isSignin;
+	const isSignin = useContext(AuthContext).state.isSignin;
 
 	return (
 		<>

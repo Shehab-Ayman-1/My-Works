@@ -8,18 +8,18 @@ const Router = express.Router();
 Router.get("/", GET_ROOMS);
 
 // GET ONE
-Router.get("/room/:roomID", GET_ROOM);
+Router.get("/find/:roomID/find", GET_ROOM);
 
 // CREATE HOTEL
-Router.post("/create/:hotelID", verifyAdmin, CREATE_ROOM);
+Router.post("/create/:hotelID/create", verifyAdmin, CREATE_ROOM);
 
 // UPDATE HOTEL
-Router.put("/update/:roomID", verifyAdmin, UPDATE_ROOM);
+Router.put("/update/:roomID/update", verifyAdmin, UPDATE_ROOM);
 
 // UPDATE ROOM AVAILABILITY
-Router.put("/update-available-rooms/:roomID", UPDATE_AVAILABLE_ROOMS);
+Router.put("/update/unavailable-rooms/:roomID/update", UPDATE_AVAILABLE_ROOMS);
 
 // DELETE HOTEL
-Router.delete("/delete/:roomID/:hotelID", verifyAdmin, DELETE_ROOM);
+Router.delete("/delete/:roomID/:hotelID/delete", verifyAdmin, DELETE_ROOM);
 
 export default Router;

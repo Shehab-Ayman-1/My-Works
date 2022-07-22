@@ -3,6 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import myParser from "body-parser";
 import cors from "cors";
 
 // Routes
@@ -15,6 +16,9 @@ const app = express();
 dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
+app.use(myParser.urlencoded({ extended: true, limit: "500mb", parameterLimit: 1000000 }));
+app.use(myParser.json({ extended: true, limit: "500mb", parameterLimit: 1000000 }));
+
 app.use(cors());
 
 // Routing

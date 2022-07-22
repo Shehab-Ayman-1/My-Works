@@ -14,12 +14,12 @@ Router.post("/login", SIGNIN_AUTH);
 Router.get("/", verifyAdmin, GET_AUTHS);
 
 // GET ONE
-Router.get("/:id", verifyClient, GET_AUTH);
+Router.get("/find/:id/find", verifyClient, GET_AUTH);
 
 // UPDATE HOTEL
-Router.put("/:id", verifyClient, UPDATE_AUTH);
+Router.put("/update/:id/update", verifyClient, UPDATE_AUTH);
 
 // DELETE HOTEL
-Router.delete("/:id", verifyClient, DELETE_AUTH);
+Router.delete("/delete/:id", verifyClient, DELETE_AUTH);
 
 export default Router;

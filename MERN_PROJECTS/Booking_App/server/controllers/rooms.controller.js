@@ -37,25 +37,21 @@ export const CREATE_ROOM = async (req, res) => {
 	try {
 		// [1] Get The Hotel ID
 		const { hotelID } = req.params;
+		const body = req.body;
 
 		// [2] Create New Room By The ID
-		const newRoom = new roomModel(req.body);
+		const newRoom = new roomModel(body);
 		const savedRoom = await newRoom.save();
 
 		// [3] Push The Room ID In The Hotel Rooms
 		if (!mongoose.Types.ObjectId.isValid(hotelID)) return res.status(404).json({ CREATE_ROOM: "Hotel ID Is Not Defined.!" });
-		try {
-			await hotelModel.findByIdAndUpdate(hotelID, { $push: { rooms: savedRoom._id } }, { new: true });
-		} catch (error) {
-			console.log(error);
-			res.status(404).json({ CREATE_ROOM: "This Hotel Is Not Defined.!" });
-		}
+		await hotelModel.findByIdAndUpdate(hotelID, { $push: { rooms: savedRoom._id } }, { new: true });
 
-		// [4] Save The New Room Now
+		// [4] Send The New Room To The Frontend
 		res.status(201).json(savedRoom);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ CREATE_ROOM: error });
+		res.status(404).json({ CREATE_ROOM: "SERVER ERROR", error });
 	}
 };
 
@@ -76,7 +72,7 @@ export const UPDATE_ROOM = async (req, res) => {
 		res.status(201).json(updatedRoom);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ UPDATE_ROOM: error });
+		res.status(404).json({ UPDATE_ROOM: "SERVER ERROR", error });
 	}
 };
 
@@ -92,13 +88,11 @@ export const UPDATE_AVAILABLE_ROOMS = async (req, res) => {
 		// [3] Update The UnAvailableRooms
 		await roomModel.updateOne({ "roomNumbers._id": roomID }, { $push: { "roomNumbers.$.unavailableDates": dates } });
 
-		console.log(new Date(dates[0]).getTime());
-
 		// [4] Send The UnAvailableRooms To The Frontend
-		res.status(201).json("UnAvailableDates Rooms Was Updated.");
+		res.status(201).json("Reserved Dates Was Added.");
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ UPDATE_ROOM_AVAILABILITY: error });
+		res.status(404).json({ UPDATE_ROOM_AVAILABILITY: "SERVER ERROR", error });
 	}
 };
 
@@ -108,21 +102,17 @@ export const DELETE_ROOM = async (req, res) => {
 		const { roomID, hotelID } = req.params;
 
 		// [2] Check If The RoomID Is Valid, Then Delete Room
-		if (!mongoose.Types.ObjectId.isValid(roomID)) return res.status(404).json({ DELETE_ROOM: "Room ID Is Not Defined.!" });
+		if (!mongoose.Types.ObjectId.isValid(roomID)) return res.status(404).json({ DELETE_ROOM: "Room ID Is Not Currect.!" });
 		await roomModel.findByIdAndRemove(roomID);
 
-		// [3] Check If The HotelID Is Valid, Then Delete Hotel't Room ID
-		if (!mongoose.Types.ObjectId.isValid(hotelID)) return res.status(404).json({ DELETE_ROOM: "Hotel ID Is Not Defined.!" });
-		try {
-			await hotelModel.findByIdAndUpdate(hotelID, { $pull: { rooms: hotelID } });
-		} catch (error) {
-			console.log(error);
-			res.status(404).json({ DELETE_ROOM: error });
-		}
+		// [3] Check If The HotelID Is Valid, Then Delete Hotel's Room ID
+		if (!mongoose.Types.ObjectId.isValid(hotelID)) return res.status(404).json({ DELETE_ROOM: "Hotel ID Is Not Currect.!" });
+		await hotelModel.findByIdAndUpdate(hotelID, { $pull: { rooms: hotelID } }, { new: true });
 
+		// [4] Send Success Message
 		res.status(201).json({ DELETE_ROOM: "Successfully, Room Has Been Deleted." });
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({ DELETE_ROOM: error });
+		res.status(404).json({ DELETE_ROOM: "SERVER ERROR", error });
 	}
 };

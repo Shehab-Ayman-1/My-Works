@@ -15,12 +15,12 @@ Router.get("/query", GET_QUERY_HOTELS);
 Router.get("/find/:id", GET_HOTEL);
 
 // CREATE HOTEL
-Router.post("/post", verifyAdmin, CREATE_HOTEL);
+Router.post("/create", verifyAdmin, CREATE_HOTEL);
 
 // UPDATE HOTEL
-Router.put("/put/:id/update", verifyAdmin, UPDATE_HOTEL);
+Router.put("/update/:id", verifyAdmin, UPDATE_HOTEL);
 
 // DELETE HOTEL
-Router.delete("/delete/:id/delete", verifyAdmin, DELETE_HOTEL);
+Router.delete("/delete/:id", verifyAdmin, DELETE_HOTEL);
 
 export default Router;

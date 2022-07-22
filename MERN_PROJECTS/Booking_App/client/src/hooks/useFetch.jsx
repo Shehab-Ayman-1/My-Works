@@ -9,7 +9,7 @@ const useFetch = (url, sendData = null) => {
 	const fetchData = async () => {
 		setLoading(true);
 		try {
-			const response = await axios.get(`http://localhost:5000/${url}`, sendData && sendData);
+			const response = await axios.get(url, sendData && sendData);
 			setData(response.data);
 		} catch (error) {
 			setError(true);

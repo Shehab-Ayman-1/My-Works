@@ -13,14 +13,14 @@ import Loading from "../../layout/loading/loading";
 import Error from "../../layout/Error/error";
 
 // Components
-import { Context } from "../../context/hotel/context";
+import { HotelContext } from "../../context/hotel/context";
 import useFetch from "../../hooks/useFetch";
 import Subscribe from "../../components/subscribe/subscribe";
 import ListSearch from "../../components/list-search/list-search";
 import ListItem from "../../components/list-item/list-item.jsx";
 
 const Hotel = () => {
-	const given = useContext(Context).state;
+	const given = useContext(HotelContext).state;
 
 	const url = `hotels?${given.destination && `city=${given.destination?.toLowerCase()}`}&min=${+given.min}&max=${+given.max}`;
 	const { data, isLoading, isError, UseReFetch } = useFetch(url);

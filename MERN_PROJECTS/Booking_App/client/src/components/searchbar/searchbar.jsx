@@ -8,7 +8,7 @@ import { CalendarMonth, LocalHotel } from "@mui/icons-material";
 import { Autocomplete, Button, Grid, Menu, Stack, TextField, Typography } from "@mui/material";
 
 // Components
-import { Context } from "../../context/hotel/context";
+import { HotelContext } from "../../context/hotel/context";
 import { NEW_SEARCH } from "../../context/hotel/actions";
 
 // Date Range
@@ -18,7 +18,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 const Searchbar = () => {
-	const context = useContext(Context);
+	const context = useContext(HotelContext);
 	const given = context.state;
 
 	// Handle Despatch

@@ -10,12 +10,12 @@ import { Style, LocalHotel, DirectionsCar } from "@mui/icons-material/";
 import { blue } from "@mui/material/colors";
 
 // Components
-import { Context } from "../../context/auth/context";
+import { AuthContext } from "../../context/auth/context";
 import { LOGOUT } from "../../context/auth/actions";
 
 const Navbar = () => {
 	// Context
-	const context = useContext(Context);
+	const context = useContext(AuthContext);
 	const user = context?.state?.user;
 
 	// Dropdown
@@ -71,7 +71,7 @@ const Navbar = () => {
 					{context.state.isSignin && (
 						<div className="more">
 							<Avatar
-								src={user?.img}
+								src={user?.avatar}
 								alt="image-flag"
 								sx={{ width: 30, height: 30, cursor: "pointer" }}
 								onClick={handleOpenDrop}
@@ -121,10 +121,12 @@ const Navbar = () => {
 
 			<Menu anchorEl={dropdown} open={openDropdown} onClose={handleCloseDrop}>
 				<MenuItem>
-					<Avatar sx={{ width: 32, height: 32, mr: 1 }}> {user?.fName?.charAt(0)} </Avatar> {user?.username}
+					<Avatar src={user?.avatar} alt="avatar-img" sx={{ width: 32, height: 32, mr: 1 }} />
+					{user?.username}
 				</MenuItem>
 				<MenuItem>
-					<Avatar sx={{ width: 32, height: 32, mr: 1 }} src={user?.avatar} alt="avatar-img" /> {user?.email}
+					<Avatar sx={{ width: 32, height: 32, mr: 1 }}>{user?.fName?.charAt(0)}</Avatar>
+					{user?.email}
 				</MenuItem>
 				<Divider />
 				<MenuItem component={Link} to="/auth/login">

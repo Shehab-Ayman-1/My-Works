@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import "./home.scss";
 
 // Material Ui
-import { Container, Grid, Typography } from "@mui/material";
+import { Container, Grid, Stack, Typography } from "@mui/material";
 import { blue } from "@mui/material/colors";
 
 // Layout
@@ -14,7 +14,7 @@ import Error from "../../layout/Error/error";
 
 // Components
 import useFetch from "../../hooks/useFetch";
-import { Context } from "../../context/hotel/context";
+import { HotelContext } from "../../context/hotel/context";
 import Searchbar from "../../components/searchbar/searchbar";
 import Banner from "../../components/banner/banner";
 import Feature from "../../components/feature/feature";
@@ -23,10 +23,10 @@ import Hotel from "../../components/hotel/hotel";
 import Subscribe from "../../components/subscribe/subscribe";
 
 const Home = () => {
-	const photos = useContext(Context).state.photos;
-	const { data: cities, isLoading: citiesLoading, isError: citiesError } = useFetch("hotels/query?city=madrid,london,berlin");
-	const { data: types, isLoading: TLoad, isError: TErr } = useFetch("hotels/query?type=hotel,apartment,resort,hotel,villa,cabin");
-	const { data: hotels, isLoading: hotelsLoading, isError: hotelsError } = useFetch("hotels?limit=10");
+	const photos = useContext(HotelContext).state.photos;
+	const { data: cities, isLoading: citiesLoading, isError: citiesError } = useFetch("/hotels/query?city=madrid,london,berlin");
+	const { data: types, isLoading: TLoad, isError: TErr } = useFetch("/hotels/query?type=hotel,apartment,resort,hotel,villa,cabin");
+	const { data: hotels, isLoading: hotelsLoading, isError: hotelsError } = useFetch("/hotels?limit=10");
 
 	return (
 		<div className="home-page">
@@ -46,7 +46,11 @@ const Home = () => {
 			<Container className="page-container" maxWidth="lg">
 				<div className="home-features">
 					{citiesLoading ? (
-						<Loading />
+						<Stack direction="row" justifyContent="space-between" gap={2}>
+							<Loading header sx={{ width: "calc(350px)" }} />
+							<Loading header sx={{ width: "calc(350px)" }} />
+							<Loading header sx={{ width: "calc(350px)" }} />
+						</Stack>
 					) : (
 						<Grid container spacing={2}>
 							{cities.map((num, i) => (
@@ -64,7 +68,13 @@ const Home = () => {
 						Browser By Property Type
 					</Typography>
 					{TLoad ? (
-						<Loading />
+						<Stack direction="row" gap={2} justifyContent="space-between">
+							<Loading header body sx={{ width: "200px", height: "250px" }} />
+							<Loading header body sx={{ width: "200px", height: "250px" }} />
+							<Loading header body sx={{ width: "200px", height: "250px" }} />
+							<Loading header body sx={{ width: "200px", height: "250px" }} />
+							<Loading header body sx={{ width: "200px", height: "250px" }} />
+						</Stack>
 					) : (
 						<Grid container spacing={2}>
 							{types.map((item, i) => (
@@ -82,7 +92,11 @@ const Home = () => {
 						Homes Guests Love
 					</Typography>
 					{hotelsLoading ? (
-						<Loading />
+						<Stack direction="row" justifyContent="space-between" gap={2}>
+							<Loading header body footer sx={{ width: "300px" }} />
+							<Loading header body footer sx={{ width: "300px" }} />
+							<Loading header body footer sx={{ width: "300px" }} />
+						</Stack>
 					) : (
 						<Grid container spacing={2}>
 							{hotels?.map((hotel, i) => (

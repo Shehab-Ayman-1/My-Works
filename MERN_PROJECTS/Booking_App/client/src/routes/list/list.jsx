@@ -8,8 +8,8 @@ import { Avatar, Button, Container, Grid, Typography } from "@mui/material";
 import { PinDrop } from "@mui/icons-material";
 
 // Components
-import { Context as HotelContext } from "../../context/hotel/context";
-import { Context as AuthContext } from "../../context/auth/context";
+import { HotelContext } from "../../context/hotel/context";
+import { AuthContext } from "../../context/auth/context";
 import Navbar from "../../layout/navbar/navbar";
 import Footer from "../../layout/footer/footer";
 import Slider from "../../components/slider/slider";

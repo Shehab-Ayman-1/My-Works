@@ -16,9 +16,13 @@ import hotel2 from "../../assets/images/hotel 2.webp";
 import hotel3 from "../../assets/images/hotel 3.webp";
 import hotel4 from "../../assets/images/hotel 4.webp";
 
+const start = new Date();
+const end = new Date();
+start.setDate(start.getDate() - 3);
+
 const INITIAL_STATE = {
 	destination: "",
-	date: [{ startDate: new Date(), endDate: new Date(), key: "selected" }],
+	date: [{ startDate: start, endDate: end, key: "selected" }],
 	options: { adult: 0, children: 0, room: 0 },
 	selectOptions: ["madrid", "london", "berlin", "resort", "spanish"],
 	min: 1,
